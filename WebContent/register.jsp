@@ -22,7 +22,6 @@ Email: <input type="text" placeholder="enter email" name="email"></br>
 First Name: <input type="text" placeholder="enter first name" name="firstname"></br>
 Family Name: <input type="text" placeholder="enter family name" name="lastname"></br>
 Password: <input type="password" placeholder="enter password" name="password"></br>
-Confirm password: <input type="password" placeholder="re-enter password" name="reenteredPass"></br>
 <input type="submit" value = "Register"></br>
 </form>
 <a href="login.jsp">Already a registered user? Login here.</a>

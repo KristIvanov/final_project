@@ -45,7 +45,7 @@ public class UserDAO {
       		users.add(u);
       		
       		//set user's id
-      		u.setUserId(usersRS.getLong("users_id"));
+      		u.setUserId(usersRS.getLong("user_id"));
       		//set user's picture if there is one
       		String pictureUrl ="";
       		if((pictureUrl=usersRS.getString("pictureURL"))!=null) {
@@ -164,6 +164,6 @@ public class UserDAO {
   
   //update user's profile by different properties given as parameters..
   public synchronized void updateUser(User u){
-	  
+	  //TODO
   };
 }

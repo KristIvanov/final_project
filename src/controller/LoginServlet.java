@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import dbModel.UserDAO;
 import managers.UsersManager;
+import model.User;
 
 /**
  * Servlet implementation class LoginServlet
@@ -30,6 +32,11 @@ public class LoginServlet extends HttpServlet {
 			HttpSession session = request.getSession();
 			session.setAttribute("username", username);
 			session.setAttribute("logged", true);
+			User u = UsersManager.getInstance().getRegisteredUsers().get(username);
+			request.getSession().setAttribute("username", u.getUsername());
+			request.getSession().setAttribute("firstname", u.getFirst_name());
+			request.getSession().setAttribute("lastname", u.getLast_name());
+			request.getSession().setAttribute("email", u.getEmail());
 			response.setHeader("Pragma", "No-cache");
 			response.setDateHeader("Expires", 0);
 			response.setHeader("Cache-control", "no-cache");
@@ -37,6 +44,7 @@ public class LoginServlet extends HttpServlet {
 		}
 		else{
 			fileName = "login.jsp";
+			errorMsg = "We did not recognise your username and password";
 		}
 		response.sendRedirect(fileName);
 	}

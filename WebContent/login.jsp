@@ -16,8 +16,8 @@
 <h2>Please login</h2>
 <h5 id = "error"><% out.println(LoginServlet.getErrorMsg());  %></h5>
 <form action="login" method="post">
-Email: <input type="text" placeholder="enter email" name="email" required="required"></br>
-Password: <input type="password" placeholder="enter password" name="pass" required="required"></br>
+Username: <input type="text" placeholder="enter username" name="email" required="required"></br>
+Password: <input type="password" placeholder="enter password" name="password" required="required"></br>
 <input type="submit" value = "Login"></br>
 </form>
 <a href="register.jsp">Don`t have an account? Register here.</a>

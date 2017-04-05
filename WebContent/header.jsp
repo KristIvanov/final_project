@@ -20,10 +20,10 @@
 		logged = (Boolean) session.getAttribute("logged");
 		if(logged){
 			button0 = "Home";
-			button1 = "View profile";
+			button1 = "Settings";
 			button2 = "Log out";
 			link0 = "index.jsp";
-			link1 = "profile.jsp";
+			link1 = "settings.jsp";
 			link2 = "logout.jsp";
 		}
 	}

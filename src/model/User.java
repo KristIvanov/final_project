@@ -30,9 +30,9 @@ public class User {
 		else {
 			throw new InvalidInputException("Invalid username!");
 		}
-		if(validatePassword(password)) {
+		if(password!=null && !password.isEmpty()) {//cannot use regex validation here because the hashed pass would be different
 			//this.password = password;
-			this.password = UsersManager.getInstance().hashPassword(password);
+			this.password = password;
 		}
 		else {
 			throw new InvalidInputException("Invalid password!");

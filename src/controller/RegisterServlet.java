@@ -28,9 +28,6 @@ public class RegisterServlet extends HttpServlet{
 		String lastname = req.getParameter("lastname");
 		String email = req.getParameter("email");
 		
-		
-		
-		
 		if(UsersManager.getInstance().validateRegistration(username, password, firstname, lastname, email)) {
 			UsersManager.getInstance().register(username, password, firstname, lastname, email);
 			fileName= "index.jsp";
@@ -38,7 +35,9 @@ public class RegisterServlet extends HttpServlet{
 		}
 		else{
 			fileName= "register.jsp";
+			errorMsg = "Registration failed!";
 		}
+		
 		resp.sendRedirect(fileName);
 	}
 

@@ -72,7 +72,7 @@ public class UsersManager {
 	  public void register(String username, String password, String firstName, String lastName, String email) {
 	    User user;
 		try {
-			user = new User(username,password,firstName,lastName,email);
+			user = new User(username, UsersManager.getInstance().hashPassword(password), firstName, lastName, email);
 			 registeredUsers.put(username, user); //put user in collection
 			 UserDAO.getInstance().saveUser(user); //save user in DB
 		} catch (InvalidInputException e) {
@@ -125,10 +125,11 @@ public class UsersManager {
 		}
 	  
 	  public String hashPassword(String password){
+		  	System.out.println(password);
 			return "" + (password.hashCode()*31+203)*19;
 		}
 
-		private boolean validateEmailAddress(String email) {
+		public boolean validateEmailAddress(String email) {
 			for(Entry<String, User> user : registeredUsers.entrySet()) {
 				if(user.getValue().getEmail().equals(email)) {
 					return false;
@@ -139,6 +140,8 @@ public class UsersManager {
 	      java.util.regex.Matcher m = p.matcher(email);
 	      return m.matches();
 		}
+
+		
 	  
 	}
 
