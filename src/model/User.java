@@ -23,7 +23,7 @@ public class User {
 	private HashSet<Destination> favorites;
 	private HashSet<Destination> wishList;
 	
-	public User(String username, String password, String email, String first_name, String last_name) throws InvalidInputException {
+	public User(String username, String password, String first_name, String last_name, String email) throws InvalidInputException {
 		if(checkString(username)) {
 			this.username = username;
 		}
@@ -31,7 +31,6 @@ public class User {
 			throw new InvalidInputException("Invalid username!");
 		}
 		if(password!=null && !password.isEmpty()) {//cannot use regex validation here because the hashed pass would be different
-			//this.password = password;
 			this.password = password;
 		}
 		else {
