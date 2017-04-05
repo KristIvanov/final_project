@@ -123,6 +123,10 @@ public class UsersManager {
 				return false;
 			}
 		}
+	  
+	  public String hashPassword(String password){
+			return "" + (password.hashCode()*31+203)*19;
+		}
 
 		private boolean validateEmailAddress(String email) {
 			for(Entry<String, User> user : registeredUsers.entrySet()) {

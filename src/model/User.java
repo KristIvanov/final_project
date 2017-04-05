@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import managers.UsersManager;
+
 public class User {
 	
 	private long userId;
@@ -29,7 +31,8 @@ public class User {
 			throw new InvalidInputException("Invalid username!");
 		}
 		if(validatePassword(password)) {
-			this.password = password;
+			//this.password = password;
+			this.password = UsersManager.getInstance().hashPassword(password);
 		}
 		else {
 			throw new InvalidInputException("Invalid password!");
