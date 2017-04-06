@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
 			response.setHeader("Pragma", "No-cache");
 			response.setDateHeader("Expires", 0);
 			response.setHeader("Cache-control", "no-cache");
-			fileName = "profile.jsp";
+			fileName = "settings.jsp";
 		}
 		else{
 			fileName = "login.jsp";

@@ -145,8 +145,58 @@ public class UserDAO {
 	  }
   }
   
-  //update user's profile by different properties given as parameters..
+  
   public synchronized void updateUser(User u){
-	  //TODO
-  };
+	  
+	  Connection con = DBManager.getInstance().getConnection();
+	  try {
+		  con.setAutoCommit(false);
+		  PreparedStatement prepSt;
+		  prepSt = con.prepareStatement("UPDATE users SET first_name = ? WHERE user_id=?");
+		  prepSt.setString(1, u.getFirst_name());
+		  prepSt.setLong(2, u.getUserId());
+		  prepSt.executeUpdate();
+		  
+		  prepSt = con.prepareStatement("UPDATE users SET last_name = ? WHERE user_id=?");
+		  prepSt.setString(1, u.getLast_name());
+		  prepSt.setLong(2, u.getUserId());
+		  prepSt.executeUpdate();
+		  
+		  prepSt = con.prepareStatement("UPDATE users SET email = ? WHERE user_id=?");
+		  prepSt.setString(1, u.getEmail());
+		  prepSt.setLong(2, u.getUserId());
+		  prepSt.executeUpdate();
+		  
+		  prepSt = con.prepareStatement("UPDATE users SET username = ? WHERE user_id=?");
+		  prepSt.setString(1, u.getUsername());
+		  prepSt.setLong(2, u.getUserId());
+		  prepSt.executeUpdate();
+		  
+		  con.commit();
+	} catch (SQLException e) {
+		try {
+			con.rollback();
+		} catch (SQLException e1) {
+			System.out.println("wtf");
+		}
+	} finally {
+		try {
+			con.setAutoCommit(true);
+		} catch (SQLException e) {
+			System.out.println("wtf");
+		}
+	}
+  }
+
+  public void updatePass(String hashPassword, User u) {
+	  Connection con = DBManager.getInstance().getConnection();
+	  PreparedStatement prepSt = null;
+	  try {
+		prepSt = con.prepareStatement("UPDATE users SET password = ? WHERE user_id=?");
+		prepSt.setString(1, hashPassword);
+		prepSt.setLong(2, u.getUserId());
+	} catch (SQLException e) {
+		System.out.println("sql pass change failed");
+	}
+	};
 }

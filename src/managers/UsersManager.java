@@ -92,7 +92,7 @@ public class UsersManager {
 		  UserDAO.getInstance().updateUser(u);
 	  }
 	  
-	  private boolean validatePassword (String password) {
+	  public boolean validatePassword (String password) {
 			boolean upperCaseLetter = false; 
 			boolean lowerCaseLetter = false;
 			boolean digit = false;
@@ -137,8 +137,14 @@ public class UsersManager {
 			}
 	      String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
 	      java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+	      System.out.println(email);
 	      java.util.regex.Matcher m = p.matcher(email);
 	      return m.matches();
+		}
+
+		public void updatePass(String newPass, User u) {
+			UserDAO.getInstance().updatePass(hashPassword(newPass), u);
+			
 		}
 
 		

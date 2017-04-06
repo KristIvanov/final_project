@@ -2,6 +2,8 @@ package controller;
 
 import java.awt.SecondaryLoop;
 import java.io.IOException;
+import java.sql.SQLException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,7 +23,9 @@ public class UpdateInfoServlet extends HttpServlet {
 	private static String errorMsg = " ";
 	private static String fileName = "updateInfo.jsp";
        
-    
+    public static String getErrorMsg() {
+		return errorMsg;
+	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -30,14 +34,15 @@ public class UpdateInfoServlet extends HttpServlet {
 		if(ses.getAttribute("logged")!= null){
 			boolean logged = (Boolean) req.getSession().getAttribute("logged");
 			if(logged){
-				String newUsername = req.getParameter("username");
-				String newFirstname = req.getParameter("firstname");
-				String newLastname = req.getParameter("lastname");
-				String newEmail = req.getParameter("email");
+				String newUsername = req.getParameter("newUsername");
+				String newFirstname = req.getParameter("newFirstname");
+				System.out.println(newFirstname + " <- newFirstname");
+				String newLastname = req.getParameter("newLastname");
+				String newEmail = req.getParameter("newEmail");
 				String confirmPass = req.getParameter("confirmPassword");
 				HttpSession session = req.getSession();
 				User u = UsersManager.getInstance().getRegisteredUsers().get((String )session.getAttribute("username"));
-				if (UsersManager.getInstance().hashPassword(u.getPassword()).equals(confirmPass)){
+				if (UsersManager.getInstance().hashPassword(confirmPass).equals(u.getPassword())){
 					if (newEmail != u.getEmail()){
 						if (!UsersManager.getInstance().validateEmailAddress(newEmail)){
 							errorMsg = "New email address not valid";
@@ -46,20 +51,25 @@ public class UpdateInfoServlet extends HttpServlet {
 							u.setEmail(newEmail);
 						}
 					}
+					System.out.println(newLastname + "newlastname");
+					System.out.println(u.getLast_name() + " u.getLastname");
 					if (newLastname != u.getLast_name()){
-						if (newLastname==null || !newLastname.isEmpty()){
+						if (newLastname==null || newLastname.isEmpty()){
 							errorMsg = "Enter last name please!";
 						}
 						else{
 							u.setLast_name(newLastname);
+							System.out.println(u.getLast_name());
 						}
 					}
 					if (newFirstname != u.getFirst_name()){
-						if (newFirstname==null || !newFirstname.isEmpty()){
+						System.out.println(newFirstname + " <- newFirsname if");
+						if (newFirstname==null || newFirstname.isEmpty()){
 							errorMsg = "Enter first name please!";
 						}
 						else{
 							u.setFirst_name(newFirstname);
+							System.out.println(u.getFirst_name());
 						}
 					}
 					if ((String )session.getAttribute("username")==newUsername){
@@ -69,6 +79,7 @@ public class UpdateInfoServlet extends HttpServlet {
 						}
 						else {
 							u.setUsername(newUsername);
+							System.out.println(u.getUsername());
 						}
 					}
 					if (errorMsg == " "){
