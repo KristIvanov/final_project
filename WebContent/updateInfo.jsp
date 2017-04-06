@@ -2,6 +2,7 @@
     pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="controller.UpdateInfoServlet" %>
+<%@ page import="controller.ChangePassServlet" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -9,6 +10,9 @@
 <title>Insert title here</title>
 </head>
 <body>
+<jsp:include page="header.jsp" />
+<br>
+<br>
 <h5 id = "error"><% out.println(UpdateInfoServlet.getErrorMsg());  %></h5>
 <h1>Upload Profile Picture</h1>
         <form name="fileform" method="post" action="uploadProfilePicture" enctype="multipart/form-data">
@@ -25,6 +29,7 @@ Last Name: <input type="text" value="${ lastname }" name="newLastname"></br>
 Confirm Password: <input type="password" placeholder="enter password" name="confirmPassword"></br>
 <input type="submit" value = "Update Info"></br>
 </form>
+<h5 id = "error"><% out.println(ChangePassServlet.getErrorMsg());  %></h5>
 <form action="changePass" method="post">
 <h1>Change Password</h1>
 Old Password: <input type="password" placeholder="enter old password" name="oldPassword" required="required"></br>

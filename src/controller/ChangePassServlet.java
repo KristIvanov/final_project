@@ -20,8 +20,12 @@ public class ChangePassServlet extends HttpServlet {
 	private static String errorMsg = " ";
 	private static String fileName = "updateInfo.jsp";
        
+	public static String getErrorMsg() {
+		return errorMsg;
+	}
     
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		errorMsg = " ";
 		HttpSession ses = req.getSession();
 		if(ses.getAttribute("logged")!= null){
 			boolean logged = (Boolean) req.getSession().getAttribute("logged");
@@ -30,7 +34,7 @@ public class ChangePassServlet extends HttpServlet {
 				String newPass = req.getParameter("newPassword");
 				HttpSession session = req.getSession();
 				User u = UsersManager.getInstance().getRegisteredUsers().get((String )session.getAttribute("username"));
-				if (UsersManager.getInstance().hashPassword(u.getPassword()).equals(oldPass)){
+				if (UsersManager.getInstance().hashPassword(oldPass).equals(u.getPassword())){
 					if (!UsersManager.getInstance().validatePassword(newPass)){
 						errorMsg = "Password is not safe!";
 					}

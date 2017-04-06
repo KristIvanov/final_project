@@ -7,9 +7,11 @@
 <title>Insert title here</title>
 </head>
 <body>
+<jsp:include page="header.jsp" />
+<br>
+<br>
 <a href="updateInfo.jsp">Update your profile settings</a>
 <br>
-<a href="changePass.jsp">Change your password</a>
 <br>
 <form action="logout" method = "post"> <input type = "submit" value= "Log out" > </form>
 </body>

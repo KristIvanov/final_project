@@ -7,6 +7,9 @@
 <title>Logging out</title>
 </head>
 <body>
+<jsp:include page="header.jsp" />
+<br>
+<br>
 Are you sure you want to log out?
 <form action="logout" method = "post"> <input type = "submit" value= "Log out" > </form>
 <a href = "index.jsp">Return to main page</a>

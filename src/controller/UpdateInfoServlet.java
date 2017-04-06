@@ -34,12 +34,11 @@ public class UpdateInfoServlet extends HttpServlet {
 		if(ses.getAttribute("logged")!= null){
 			boolean logged = (Boolean) req.getSession().getAttribute("logged");
 			if(logged){
-				String newUsername = req.getParameter("newUsername");
-				String newFirstname = req.getParameter("newFirstname");
-				System.out.println(newFirstname + " <- newFirstname");
-				String newLastname = req.getParameter("newLastname");
-				String newEmail = req.getParameter("newEmail");
-				String confirmPass = req.getParameter("confirmPassword");
+				String newUsername = req.getParameter("newUsername").trim();
+				String newFirstname = req.getParameter("newFirstname").trim();
+				String newLastname = req.getParameter("newLastname").trim();
+				String newEmail = req.getParameter("newEmail").trim();
+				String confirmPass = req.getParameter("confirmPassword").trim();
 				HttpSession session = req.getSession();
 				User u = UsersManager.getInstance().getRegisteredUsers().get((String )session.getAttribute("username"));
 				if (UsersManager.getInstance().hashPassword(confirmPass).equals(u.getPassword())){

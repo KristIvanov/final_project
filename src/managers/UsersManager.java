@@ -125,7 +125,6 @@ public class UsersManager {
 		}
 	  
 	  public String hashPassword(String password){
-		  	System.out.println(password);
 			return "" + (password.hashCode()*31+203)*19;
 		}
 

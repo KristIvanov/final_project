@@ -13,15 +13,14 @@
 <jsp:include page="header.jsp" />
 <br>
 <br>
-
 <h2>Please register a new account</h2>
 <h5 id = "error"><% out.println(RegisterServlet.getErrorMsg());  %></h5>
 <form action="register" method="post">
-Username: <input type="text" placeholder="enter username" name="username"></br>
-Email: <input type="text" placeholder="enter email" name="email"></br>
-First Name: <input type="text" placeholder="enter first name" name="firstname"></br>
-Family Name: <input type="text" placeholder="enter family name" name="lastname"></br>
-Password: <input type="password" placeholder="enter password" name="password"></br>
+Username: <input type="text" value="${ username }" name="username" required></br>
+Email: <input type="text"  value="${ email }" name="email" required></br>
+First Name: <input type="text" value="${ firstname }" name="firstname" required></br>
+Family Name: <input type="text" value="${ lastname }" name="lastname" required></br>
+Password: <input type="password" placeholder="enter password" name="password" required></br>
 <input type="submit" value = "Register"></br>
 </form>
 <a href="login.jsp">Already a registered user? Login here.</a>

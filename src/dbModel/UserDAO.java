@@ -192,7 +192,7 @@ public class UserDAO {
 	  Connection con = DBManager.getInstance().getConnection();
 	  PreparedStatement prepSt = null;
 	  try {
-		prepSt = con.prepareStatement("UPDATE users SET password = ? WHERE user_id=?");
+		prepSt = con.prepareStatement("UPDATE users SET password = '?' WHERE user_id=?");
 		prepSt.setString(1, hashPassword);
 		prepSt.setLong(2, u.getUserId());
 	} catch (SQLException e) {
