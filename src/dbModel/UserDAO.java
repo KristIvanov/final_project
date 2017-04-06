@@ -7,7 +7,6 @@ import java.sql.Statement;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
 import managers.DestinationManager;
 import managers.PostManager;
 import managers.UsersManager;
