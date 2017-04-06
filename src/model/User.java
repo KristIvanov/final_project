@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import managers.UsersManager;
+
 public class User {
 	
 	private long userId;
@@ -21,14 +23,14 @@ public class User {
 	private HashSet<Destination> favorites;
 	private HashSet<Destination> wishList;
 	
-	public User(String username, String password, String email, String first_name, String last_name) throws InvalidInputException {
+	public User(String username, String password, String first_name, String last_name, String email) throws InvalidInputException {
 		if(checkString(username)) {
 			this.username = username;
 		}
 		else {
 			throw new InvalidInputException("Invalid username!");
 		}
-		if(validatePassword(password)) {
+		if(password!=null && !password.isEmpty()) {//cannot use regex validation here because the hashed pass would be different
 			this.password = password;
 		}
 		else {
