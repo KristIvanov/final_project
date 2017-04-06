@@ -7,7 +7,6 @@ import java.sql.Statement;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import managers.DestinationManager;
 import managers.PostManager;
 import managers.UsersManager;
 import model.InvalidInputException;
@@ -36,11 +35,12 @@ public class UserDAO {
     	Statement userST = con.createStatement();
     	ResultSet usersRS = userST.executeQuery("SELECT user_id,username,password,first_name,last_name,email,pictureURL FROM users;");
       	while (usersRS.next()) {
+      		
       		User u = new User(	usersRS.getString("username"), 
       							usersRS.getString("password"), 
-      							usersRS.getString("email"), 
       							usersRS.getString("first_name"), 
-      							usersRS.getString("last_name"));  //TODO hash pass);
+      							usersRS.getString("last_name"), 
+      							usersRS.getString("email"));  //TODO hash pass);
       		users.add(u);
       		
       		//set user's id
@@ -53,10 +53,8 @@ public class UserDAO {
       		
       		
 	    	String postsSQL = "SELECT posts_post_id FROM users_has_posts WHERE users_user_id=?";
-	    	String favoritesDestinationsSQL = "SELECT destinations_destination_id FROM users_favorites_destinations WHERE users_user_id=?";
 	    	String followersSQL = "SELECT follower_id FROM users_has_followers WHERE user_id=?";
 	    	String followingSQL = "SELECT user_id FROM users_has_followers WHERE follower_id=?";
-	    	String wishListSQL = "SELECT destinations_destination_id FROM users_wish_list WHERE users_user_id=?";
 	    	
 	    	//get user's posts
 	    	PreparedStatement postsST = con.prepareStatement(postsSQL);
@@ -66,17 +64,10 @@ public class UserDAO {
 	    		u.addPost(PostManager.getInstance().getPosts().get(postsRS.getLong("posts_post_id")));
 	    	}
 	    	
-	    	//get user's favorites destinations
-	    	PreparedStatement favoritesDestinationsST = con.prepareStatement(favoritesDestinationsSQL);
-	    	favoritesDestinationsST.setLong(1, u.getUserId());
-	    	ResultSet favoritesDestinationsRS = favoritesDestinationsST.executeQuery();
-	    	while(favoritesDestinationsRS.next()) {
-	    		u.addFavorite(DestinationManager.getInstance().getDestinations().get(favoritesDestinationsRS.getLong("destinations_destination_id")));
-	    	}
 	    	
 	    	//get user's followers
 	    	PreparedStatement followersPS = con.prepareStatement(followersSQL);
-	    	favoritesDestinationsST.setLong(1, u.getUserId());
+	    	followersPS.setLong(1, u.getUserId());
 	    	ResultSet followersRS = followersPS.executeQuery();
 	    	while(followersRS.next()) {
 	    		long followerId = followersRS.getLong("follower_id");
@@ -102,13 +93,6 @@ public class UserDAO {
 	    		u.addFollowing(following);
 	    	}
 	    	
-	    	//get user's wish list
-	    	PreparedStatement wishListPS = con.prepareStatement(wishListSQL);
-	    	wishListPS.setLong(1, u.getUserId());
-	    	ResultSet wishListRS = wishListPS.executeQuery();
-	    	while(wishListRS.next()) {
-	    		u.addToWishList(DestinationManager.getInstance().getDestinations().get(wishListRS.getLong("destinations_destination_id")));
-	    	}
 	    	
       	}
     	DBManager.getInstance().getConnection().commit();;

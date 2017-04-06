@@ -9,10 +9,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import managers.DestinationManager;
 import managers.UsersManager;
 import model.Category;
-import model.Destination;
 import model.InvalidInputException;
 import model.Picture;
 import model.Post;
@@ -36,35 +34,27 @@ public class PostDAO {
 		con.setAutoCommit(false);
 		HashSet<Post> posts = new HashSet<>();
 			try { 
-		      Statement st = con.createStatement();
-		      ResultSet resultSet = st.executeQuery("SELECT post_id,description,author_id,date,fk_destination_id FROM posts ");
-		      while (resultSet.next()) {
-		    	  //get all categories
-		    	  PreparedStatement categoriesSt = con.prepareStatement("SELECT c.category_id,c.name,c.description FROM categories c JOIN posts_has_categories pc ON c.category_id=pc.categories_category_id WHERE pc.posts_post_id = ?");
-		    	  long post_id = resultSet.getLong("post_id");
-		    	  categoriesSt.setLong(1, post_id);
-		    	  ResultSet categoriesRS = categoriesSt.executeQuery();
-		      
-		    	//temp collection for the post categories
-		    	  HashSet<Category> categories = new HashSet<>();
-		  		while(categoriesRS.next()) {
-		  			categories.add(new Category(	categoriesRS.getString("name"),
-		  											categoriesRS.getString("description")));
-		  		}
-		  		
+		      Statement postST = con.createStatement();
+		      ResultSet postRS = postST.executeQuery("SELECT post_id,post_name,post_description,author_id,categories_category_id,date,destination_name,longitude,latitude FROM posts ");
+		      while (postRS.next()) {
+		    	long post_id = postRS.getLong("post_id");
+		    	//get the category
+		    	Category category = CategoryDAO.getInstance().categories.get(postRS.getLong("categories_category_id"));
 		  		//get the author
 		  		PreparedStatement authorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
-		  		authorST.setLong(1, resultSet.getLong("author_id"));
+		  		authorST.setLong(1, postRS.getLong("author_id"));
 		  		ResultSet authorRS = authorST.executeQuery();
 		  		authorRS.next();
 		  		User author = UsersManager.getInstance().getRegisteredUsers().get(authorRS.getString("username"));
-		  		Destination destination = DestinationManager.getInstance().getDestinations().get(resultSet.getLong("fk_destination_id"));
 		  		//create the post and add it in the hashset
-		  		Post post = new Post	(categories, 
-		  								resultSet.getString("description"), 
+		  		Post post = new Post	(postRS.getString("post_name"),
+		  								category,
+		  								postRS.getString("description"), 
 		  								author, 
-		  								resultSet.getTimestamp("date").toLocalDateTime(), 
-		  								destination);
+		  								postRS.getTimestamp("date").toLocalDateTime(), 
+		  								postRS.getString("destination"),
+		  								postRS.getDouble("longitude"),
+		  								postRS.getDouble("latitude"));
 		  		
 			    	posts.add(post);
 			    	post.setPostId(post_id);

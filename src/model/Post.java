@@ -10,20 +10,31 @@ import java.util.Set;
 public class Post {
 	
 	private long postId;
-	private HashSet<Category> categories;
+	private String postName;
+	private Category category;
 	private ArrayList<Picture> pictures;
 	private String description;
 	private User author;
 	private LocalDateTime date;
 	private HashSet<User> likers;
 	private ArrayList<Comment> comments;
-	private Destination destination;
+	private String destination;
+	private double longitude;
+	private double latitude;
 	
 	
-	public Post(HashSet<Category> categories, String description, User author, LocalDateTime date,
-			Destination destination) throws InvalidInputException {
-		this.categories = new HashSet<>();
-		this.categories = categories;
+	public Post(String postName,Category category, String description, User author, LocalDateTime date,
+			String destinationName, double longitude, double latitude) throws InvalidInputException {
+		
+		if(checkString(postName)) {
+			this.postName=postName;
+		}
+		if(checkString(destinationName)) {
+			this.destination=destinationName;
+		}
+		this.latitude=latitude;
+		this.longitude=longitude;
+		this.category=category;
 		
 		if(checkString(description)) {
 			this.description = description;
@@ -33,7 +44,6 @@ public class Post {
 		}
 		this.author = author;
 		this.date = date;
-		this.destination = destination;
 		this.pictures = new ArrayList<>();
 		this.likers = new HashSet<>();
 		this.comments = new ArrayList<>();
@@ -59,9 +69,7 @@ public class Post {
 		this.likers.add(u);
 	}
 	
-	public Set<Category> getCategories() {
-		return Collections.unmodifiableSet(categories);
-	}
+	
 
 	public List<Picture> getPictures() {
 		return Collections.unmodifiableList(pictures);
@@ -87,8 +95,25 @@ public class Post {
 		return Collections.unmodifiableList(comments);
 	}
 
-	public Destination getDestination() {
+	public String getDestination() {
 		return destination;
+	}
+	
+
+	public String getPostName() {
+		return postName;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public double getLatitude() {
+		return latitude;
 	}
 
 	private boolean checkString(String name) {

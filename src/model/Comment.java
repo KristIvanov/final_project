@@ -5,10 +5,18 @@ public class Comment {
 	private long comment_id;
 	private User author;
 	private String text;
+	private Post post;
+	private String videoURL;
 	
-	public Comment(User author, String text) throws InvalidInputException {
+	public Comment(User author, String text,Post post, String videoUrl) throws InvalidInputException {
 		this.author = author;
-		
+		this.post=post;
+		if(checkString(videoUrl)) {
+			this.videoURL=videoUrl;
+		}
+		else {
+			throw new InvalidInputException("Invalid video url!");
+		}
 		if(checkString(text)) {
 			this.text = text;
 		}
@@ -19,6 +27,18 @@ public class Comment {
 	
 	
 	
+	public Post getPost() {
+		return post;
+	}
+
+
+
+	public String getVideoURL() {
+		return videoURL;
+	}
+
+
+
 	public long getComment_id() {
 		return comment_id;
 	}

@@ -39,9 +39,10 @@ public class UsersManager {
 	}
 	  
 	  public boolean validateLogin(String username, String password) {
-	    if (!registeredUsers.containsKey(username)) { //if the username doesn't exist return false
+	    if ( !registeredUsers.containsKey(username)) { //if the username doesn't exist return false
 	      return false;
 	    }
+	    
 	    //return if user's password matches the given password 
 	    return (registeredUsers.get(username)).getPassword().equals(password);
 	  }
@@ -76,7 +77,6 @@ public class UsersManager {
 			 registeredUsers.put(username, user); //put user in collection
 			 UserDAO.getInstance().saveUser(user); //save user in DB
 		} catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	  }

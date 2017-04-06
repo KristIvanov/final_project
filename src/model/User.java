@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import managers.UsersManager;
 
 public class User {
 	
@@ -20,8 +19,7 @@ public class User {
 	private HashSet<User> followers;
 	private HashSet<User> following;
 	private ArrayList<Post> posts;
-	private HashSet<Destination> favorites;
-	private HashSet<Destination> wishList;
+	
 	
 	public User(String username, String password, String first_name, String last_name, String email) throws InvalidInputException {
 		if(checkString(username)) {
@@ -57,8 +55,7 @@ public class User {
 		followers = new HashSet<>();
 		following = new HashSet<>();
 		posts = new ArrayList<>();
-		favorites = new HashSet<>();
-		wishList = new HashSet<>();
+		
 	}
 	
 	
@@ -133,13 +130,7 @@ public class User {
 		return Collections.unmodifiableList(posts);
 	}
 
-	public Set<Destination> getFavorites() {
-		return Collections.unmodifiableSet(favorites);
-	}
-
-	public Set<Destination> getWishList() {
-		return Collections.unmodifiableSet(wishList);
-	}
+	
 	
 	public void addFollower(User follower) {
 		this.followers.add(follower);
@@ -149,13 +140,7 @@ public class User {
 		this.following.add(following);
 	}
 	
-	public void addFavorite(Destination d) {
-		this.favorites.add(d);
-	}
 	
-	public void addToWishList(Destination d) {
-		this.wishList.add(d);
-	}
 	
 	public void addPost(Post p) {
 		this.posts.add(p);
@@ -168,38 +153,7 @@ public class User {
 		return false;
 	}
 
-	private boolean validatePassword (String password) {
-		boolean upperCaseLetter = false; 
-		boolean lowerCaseLetter = false;
-		boolean digit = false;
-		if(password.length() < 5 || password.length() > 15) { 
-			return false;
-		}
-		for (int i = 0; i < password.length(); i++) {
-			if (password.charAt(i) >= 'A' && password.charAt(i) <= 'Z') {
-				upperCaseLetter = true;
-				continue;
-			}
-			if (password.charAt(i) >= 'a' && password.charAt(i) <= 'z' ) { 
-				lowerCaseLetter = true;
-				continue;
-			}
-			if (password.charAt(i) >= '0' && password.charAt(i) <= '9'){ 
-				digit = true;
-				continue;
-			}
-			if (upperCaseLetter && lowerCaseLetter && digit) { 
-				break;
-			}
-		}
-		if (upperCaseLetter && lowerCaseLetter && digit) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
+	
 	private boolean validateEmailAddress(String email) {
         String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
