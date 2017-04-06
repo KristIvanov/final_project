@@ -35,7 +35,6 @@ public class UserDAO {
     	Statement userST = con.createStatement();
     	ResultSet usersRS = userST.executeQuery("SELECT user_id,username,password,first_name,last_name,email,pictureURL FROM users;");
       	while (usersRS.next()) {
-      		
       		User u = new User(	usersRS.getString("username"), 
       							usersRS.getString("password"), 
       							usersRS.getString("first_name"), 
@@ -63,6 +62,8 @@ public class UserDAO {
 	    	while(postsRS.next()) {
 	    		u.addPost(PostManager.getInstance().getPosts().get(postsRS.getLong("posts_post_id")));
 	    	}
+	    	postsST.close();
+	    	postsRS.close();
 	    	
 	    	
 	    	//get user's followers
@@ -79,6 +80,9 @@ public class UserDAO {
 	    		u.addFollower(follower);
 	    	}
 	    	
+	    	followersPS.close();
+	    	followersRS.close();
+	    	
 	    	//get user's following
 	    	PreparedStatement followingPS = con.prepareStatement(followingSQL);
 	    	followingPS.setLong(1, u.getUserId());
@@ -93,8 +97,11 @@ public class UserDAO {
 	    		u.addFollowing(following);
 	    	}
 	    	
-	    	
+	    	followersPS.close();
+	    	followersRS.close();
       	}
+      	userST.close();
+	    usersRS.close();
     	DBManager.getInstance().getConnection().commit();;
 
     }
@@ -139,6 +146,7 @@ public class UserDAO {
 		prepSt = DBManager.getInstance().getConnection().prepareStatement("DELETE FROM TABLE users WHERE user_id=?");
 		prepSt.setLong(1, u.getUserId());
 		prepSt.executeUpdate();
+		prepSt.close();
 		System.out.println("A user successfully deleted!");
 	  } catch (Exception e) {
 		 System.out.println(e.getMessage());
@@ -171,7 +179,7 @@ public class UserDAO {
 		  prepSt.setString(1, u.getUsername());
 		  prepSt.setLong(2, u.getUserId());
 		  prepSt.executeUpdate();
-		  
+		  prepSt.close();
 		  con.commit();
 	} catch (SQLException e) {
 		try {
@@ -192,11 +200,28 @@ public class UserDAO {
 	  Connection con = DBManager.getInstance().getConnection();
 	  PreparedStatement prepSt = null;
 	  try {
-		prepSt = con.prepareStatement("UPDATE users SET password = '?' WHERE user_id=?");
+		prepSt = con.prepareStatement("UPDATE users SET password = ? WHERE user_id=?");
 		prepSt.setString(1, hashPassword);
 		prepSt.setLong(2, u.getUserId());
-	} catch (SQLException e) {
-		System.out.println("sql pass change failed");
+		prepSt.executeUpdate();
+		prepSt.close();
+	  } catch (SQLException e) {
+		  System.out.println("sql pass change failed");
+	  }
 	}
-	};
+  
+  public void addProfilePic(User u) {
+	  Connection con = DBManager.getInstance().getConnection();
+	  PreparedStatement prepSt = null;
+	  try {
+		prepSt=con.prepareStatement("UPDATE users SET pictureURL = ? WHERE user_id=?");
+		prepSt.setString(1, u.getPhotoURL());
+		prepSt.setLong(2, u.getUserId());
+		prepSt.executeUpdate();
+		prepSt.close();
+	} catch (SQLException e) {
+		System.out.println("Adding picture url failed!" + e.getMessage());
+	}
+	  
+  }
 }

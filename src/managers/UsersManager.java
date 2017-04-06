@@ -147,6 +147,12 @@ public class UsersManager {
 		}
 
 		
+		public void addProfilePic(String username,String photoUrl) {
+			User u = registeredUsers.get(username);
+			u.setPhotoURL(photoUrl);
+			UserDAO.getInstance().addProfilePic(u);
+		}
+		
 	  
 	}
 
