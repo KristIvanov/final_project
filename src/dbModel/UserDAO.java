@@ -102,8 +102,7 @@ public class UserDAO {
       	}
       	userST.close();
 	    usersRS.close();
-    	DBManager.getInstance().getConnection().commit();;
-
+	    con.commit();
     }
     catch (SQLException e) {
     	System.out.println("Cannot make statement." + e.getMessage());

@@ -12,7 +12,7 @@ public class Post {
 	private long postId;
 	private String postName;
 	private Category category;
-	private ArrayList<Picture> pictures;
+	private String pictureURL;
 	private String description;
 	private User author;
 	private LocalDateTime date;
@@ -24,7 +24,7 @@ public class Post {
 	
 	
 	public Post(String postName,Category category, String description, User author, LocalDateTime date,
-			String destinationName, double longitude, double latitude) throws InvalidInputException {
+			String destinationName, double longitude, double latitude, String pictureURL) throws InvalidInputException {
 		
 		if(checkString(postName)) {
 			this.postName=postName;
@@ -42,9 +42,15 @@ public class Post {
 		else {
 			throw new InvalidInputException("Invalid post description!");
 		}
+		if(checkString(pictureURL)) {
+			this.pictureURL= pictureURL;
+		}
+		else {
+			throw new InvalidInputException("Invalid picture url!");
+		}
+		
 		this.author = author;
 		this.date = date;
-		this.pictures = new ArrayList<>();
 		this.likers = new HashSet<>();
 		this.comments = new ArrayList<>();
 	}
@@ -57,9 +63,6 @@ public class Post {
 		this.postId = postId;
 	}
 
-	public void addPicture(Picture p) {
-		this.pictures.add(p);
-	}
 	
 	public void addComment(Comment c) {
 		this.comments.add(c);
@@ -71,8 +74,8 @@ public class Post {
 	
 	
 
-	public List<Picture> getPictures() {
-		return Collections.unmodifiableList(pictures);
+	public String getPictureURL() {
+		return pictureURL;
 	}
 
 	public String getDescription() {

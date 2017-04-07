@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import dbModel.UserDAO;
 import managers.UsersManager;
 import model.User;
 
@@ -41,6 +40,9 @@ public class LoginServlet extends HttpServlet {
 			response.setDateHeader("Expires", 0);
 			response.setHeader("Cache-control", "no-cache");
 			fileName = "settings.jsp";
+			if(session.getAttribute("url") != null) {
+				fileName = (String) session.getAttribute("url");
+			}
 		}
 		else{
 			fileName = "login.jsp";

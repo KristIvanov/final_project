@@ -7,12 +7,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Update profile</title>
 </head>
 <body>
 <jsp:include page="header.jsp" />
 <br>
 <br>
+<c:if test="${sessionScope.username !=null }">
 <h5 id = "error"><% out.println(UpdateInfoServlet.getErrorMsg());  %></h5>
 <h1>Upload Profile Picture</h1>
         <form name="fileform" method="post" action="uploadProfilePicture" enctype="multipart/form-data">
@@ -36,5 +37,10 @@ Old Password: <input type="password" placeholder="enter old password" name="oldP
 New Password: <input type="password" placeholder="enter new password" name="newPassword" required="required"></br>
 <input type="submit" value = "Change Password"></br>
 </form>
+</c:if>
+<c:if test="${sessionScope.username ==null }">
+<%session.setAttribute("url", "updateInfo.jsp"); %>
+<jsp:forward page="login.jsp"></jsp:forward>
+</c:if>
 </body>
 </html>

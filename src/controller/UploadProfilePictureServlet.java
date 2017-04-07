@@ -37,6 +37,7 @@ public class UploadProfilePictureServlet extends HttpServlet {
 				File profilePicFile = new File(dir, username+"-profile-pic."+ profilePic.getContentType().split("/")[1]);
 				Files.copy(profilePicStream, profilePicFile.toPath());
 				UsersManager.getInstance().addProfilePic(username, profilePicFile.getAbsolutePath());
+				response.getWriter().append("Picture successfully uploaded!");
 
 			}
 	}
