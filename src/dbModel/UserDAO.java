@@ -223,4 +223,6 @@ public class UserDAO {
 	}
 	  
   }
+  
+  //TODO create view profile jsp and view all users with their profiles jsp
 }

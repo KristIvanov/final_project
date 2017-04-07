@@ -69,4 +69,8 @@ private static CommentDAO instance;
 		
 	}
 	
+	//TODO add comment and delete comment
+	//TODO create add comment jsp and servlet
+	
+	
 }

@@ -20,7 +20,7 @@
 <br>
 <form action="logout" method = "post"> <input type = "submit" value= "Log out" > </form>
 </c:if>
-<c:if test="${sessionScope.username ==null }">
+<c:if test="${sessionScope.username == null }">
 <%session.setAttribute("url", "settings.jsp"); %>
 <jsp:forward page="login.jsp"></jsp:forward>
 </c:if>

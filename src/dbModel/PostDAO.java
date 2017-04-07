@@ -14,8 +14,8 @@ import java.util.Set;
 
 import managers.UsersManager;
 import model.Category;
+import model.Comment;
 import model.InvalidInputException;
-import model.Picture;
 import model.Post;
 import model.User;
 
@@ -34,36 +34,60 @@ public class PostDAO {
 	
 	public synchronized Set<Post> getAllPosts() throws SQLException {
 		Connection con = DBManager.getInstance().getConnection();
-		
 		HashSet<Post> posts = new HashSet<>();
 			try { 
 				con.setAutoCommit(false);
-		      Statement postST = con.createStatement();
-		      ResultSet postRS = postST.executeQuery("SELECT post_id,post_name,post_description,author_id,categories_category_id,date,destination_name,longitude,latitude,picture_url FROM posts ");
-		      while (postRS.next()) {
-		    	long post_id = postRS.getLong("post_id");
-		    	//get the category
-		    	Category category = CategoryDAO.getInstance().categories.get(postRS.getLong("categories_category_id"));
-		  		//get the author
-		  		PreparedStatement authorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
-		  		authorST.setLong(1, postRS.getLong("author_id"));
-		  		ResultSet authorRS = authorST.executeQuery();
-		  		authorRS.next();
-		  		User author = UsersManager.getInstance().getRegisteredUsers().get(authorRS.getString("username"));
-		  		//create the post and add it in the hashset
-		  		Post post = new Post	(postRS.getString("post_name"),
-		  								category,
-		  								postRS.getString("post_description"), 
-		  								author, 
-		  								postRS.getTimestamp("date").toLocalDateTime(), 
-		  								postRS.getString("destination_name"),
-		  								postRS.getDouble("longitude"),
-		  								postRS.getDouble("latitude"),
-		  								postRS.getString("picture_url"));
+				Statement postST = con.createStatement();
+				ResultSet postRS = postST.executeQuery("SELECT post_id,post_name,post_description,author_id,categories_category_id,date,destination_name,longitude,latitude,picture_url FROM posts ");
+				while (postRS.next()) {
+					long post_id = postRS.getLong("post_id");
+		    	
+					//get the category
+					Category category = CategoryDAO.getInstance().categories.get(postRS.getLong("categories_category_id"));
 		  		
-			    	posts.add(post);
+					//get the author
+					PreparedStatement authorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
+			  		authorST.setLong(1, postRS.getLong("author_id"));
+			  		ResultSet authorRS = authorST.executeQuery();
+			  		authorRS.next();
+			  		User author = UsersManager.getInstance().getRegisteredUsers().get(authorRS.getString("username"));
+			  		//create the post and add it in the hashset
+			  		Post post = new Post	(postRS.getString("post_name"),
+			  								category,
+			  								postRS.getString("post_description"), 
+			  								author, 
+			  								postRS.getTimestamp("date").toLocalDateTime(), 
+			  								postRS.getString("destination_name"),
+			  								postRS.getDouble("longitude"),
+			  								postRS.getDouble("latitude"),
+			  								postRS.getString("picture_url"));
+			  		posts.add(post);
 			    	post.setPostId(post_id);
-			    	con.commit();
+			  		
+			  		//get all comments
+			  		PreparedStatement commentsST = con.prepareStatement("SELECT author_id,text,videoURL FROM comments");
+			  		ResultSet commentsRS = commentsST.executeQuery();
+			  		while(commentsRS.next()) {
+			  			PreparedStatement commentAuthorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
+			  			commentAuthorST.setLong(1, commentsRS.getLong("author_id"));
+				  		ResultSet commentAuthorRS = commentAuthorST.executeQuery();
+				  		authorRS.next();
+				  		User commentAuthor = UsersManager.getInstance().getRegisteredUsers().get(commentAuthorRS.getString("username"));
+				  		post.addComment(new Comment(	commentAuthor,
+				  										commentsRS.getString("text"), 
+				  										post,
+				  										commentsRS.getString("videoURL")));
+				  		commentAuthorRS.close();
+				  		commentAuthorST.close();
+			  		}
+			  		authorRS.close();
+			  		authorST.close();
+			  		commentsRS.close();
+			  		commentsST.close();
+			  		postRS.close();
+			  		postST.close();
+			  		
+			  		con.commit();
 		      }
 			}
 			catch (SQLException e) {
@@ -99,6 +123,7 @@ public class PostDAO {
 			ps.setBigDecimal(8, new BigDecimal(p.getLatitude()));
 			ps.setString(9, p.getPictureURL());
 			ps.executeUpdate();
+			//TODO fix problem with double and decimal in DB
 			ResultSet rs = ps.getGeneratedKeys();
 			rs.next();
 			long postId = rs.getLong(1);
@@ -112,6 +137,10 @@ public class PostDAO {
 		}
 				
 	}
+	
+	//TODO delete post
+	//TODO create view all posts with their comments jsp 
+	//TODO create view particular post jsp
 }
 	
 	
