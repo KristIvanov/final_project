@@ -24,6 +24,7 @@ import dbModel.DBManager;
 import managers.PostManager;
 import model.Category;
 import model.InvalidInputException;
+import model.Post;
 
 @WebServlet("/addPost")
 @MultipartConfig
@@ -45,6 +46,8 @@ public class AddPostServlet extends HttpServlet {
 			double longitude = Double.parseDouble(req.getParameter("longitude"));
 			double latitude = Double.parseDouble(req.getParameter("latitude"));
 			System.out.println(longitude);
+			String hashtags = req.getParameter("hashtags").trim();
+			String[] keywords = hashtags.split(" ");
 	        
 			Part postPic = req.getPart("photo");//handles data from <input type=file name=photo>
 			InputStream postPicStream = postPic.getInputStream();
@@ -73,7 +76,7 @@ public class AddPostServlet extends HttpServlet {
 				rs.next();
 				Long categoryId = rs.getLong("category_id");
 				Category category = CategoryDAO.getInstance().categories.get(categoryId);
-				PostManager.getInstance().addNewPost(postName, username, postdescription, category, date, destinationName, longitude, latitude,postPicUrl);
+				PostManager.getInstance().addNewPost(postName, username, postdescription, category, date, destinationName, longitude, latitude,postPicUrl, keywords);
 				fileName= "index.jsp";
 			} catch (InvalidInputException e) {
 				fileName= "addPost.jsp";

@@ -23,6 +23,7 @@ Post description:<textarea name="postdescription" value="${postdescription }" co
 Destination name: <input type="text" value="${ destinationname }" name="destinationname" required></br>
 Longitude: <input type="text" value="${ longitude }" name="longitude" required></br>
 latitude: <input type="text" value="${latitude}" name="latitude" required></br>
+Enter key words separated by spaces: <input type="text" value="${ hashtags }" name="hashtags" ></br>
 Categories: 
 <select name = "category">
                 <option value="beaches">Beaches</option>

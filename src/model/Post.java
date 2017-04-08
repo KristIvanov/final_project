@@ -21,6 +21,7 @@ public class Post {
 	private String destination;
 	private double longitude;
 	private double latitude;
+	private ArrayList<String> hashtags;
 	
 	
 	public Post(String postName,Category category, String description, User author, LocalDateTime date,
@@ -124,6 +125,16 @@ public class Post {
 			return true;
 		}
 		return false;
+	}
+	
+	public void addHashtags(String[] args){
+		for (String string : args) {
+			hashtags.add(string);
+		}
+	}
+	
+	public List<String> getHashtags() {
+		return Collections.unmodifiableList(hashtags);
 	}
 	
 	

@@ -138,7 +138,20 @@ public class PostDAO {
 				
 	}
 	
-	//TODO delete post
+	public synchronized void deletePost(Post p){
+		PreparedStatement prepSt;
+		  try {
+			prepSt = DBManager.getInstance().getConnection().prepareStatement("DELETE FROM TABLE posts WHERE post_id=?");
+			prepSt.setLong(1, p.getPostId());
+			prepSt.executeUpdate();
+			prepSt.close();
+			System.out.println("Post successfully deleted!");
+		  } catch (Exception e) {
+			 System.out.println(e.getMessage());
+		  }
+	}
+	
+	
 	//TODO create view all posts with their comments jsp 
 	//TODO create view particular post jsp
 }
