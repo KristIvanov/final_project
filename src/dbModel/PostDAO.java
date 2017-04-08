@@ -65,7 +65,7 @@ public class PostDAO {
 			    	post.setPostId(post_id);
 			  		
 			  		//get all comments
-			  		PreparedStatement commentsST = con.prepareStatement("SELECT author_id,text,videoURL FROM comments");
+			  		PreparedStatement commentsST = con.prepareStatement("SELECT author_id,text FROM comments");
 			  		ResultSet commentsRS = commentsST.executeQuery();
 			  		while(commentsRS.next()) {
 			  			PreparedStatement commentAuthorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
@@ -75,8 +75,7 @@ public class PostDAO {
 				  		User commentAuthor = UsersManager.getInstance().getRegisteredUsers().get(commentAuthorRS.getString("username"));
 				  		post.addComment(new Comment(	commentAuthor,
 				  										commentsRS.getString("text"), 
-				  										post,
-				  										commentsRS.getString("videoURL")));
+				  										post));
 				  		commentAuthorRS.close();
 				  		commentAuthorST.close();
 			  		}
@@ -139,8 +138,6 @@ public class PostDAO {
 	}
 	
 	//TODO delete post
-	//TODO create view all posts with their comments jsp 
-	//TODO create view particular post jsp
 }
 	
 	

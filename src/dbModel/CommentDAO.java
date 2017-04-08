@@ -39,7 +39,7 @@ private static CommentDAO instance;
 		Connection con = DBManager.getInstance().getConnection();
 		try {
 			con.setAutoCommit(false);
-			PreparedStatement ps = con.prepareStatement("SELECT  comment_id,author_id,text,posts_post_id,videoURL FROM comments");
+			PreparedStatement ps = con.prepareStatement("SELECT  comment_id,author_id,text,posts_post_id FROM comments");
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
 				PreparedStatement authorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
@@ -48,7 +48,7 @@ private static CommentDAO instance;
 		  		authorRS.next();
 		  		User author = UsersManager.getInstance().getRegisteredUsers().get(authorRS.getString("username"));
 		  		Post post = PostManager.getInstance().getPosts().get(rs.getLong("posts_post_id"));
-				comments.put(rs.getLong("comment_id"), new Comment(author, rs.getString("text"), post, rs.getString("videoURL")));
+				comments.put(rs.getLong("comment_id"), new Comment(author, rs.getString("text"), post));
 				con.commit();
 				rs.close();
 				ps.close();
