@@ -2,7 +2,9 @@ package managers;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,7 +17,7 @@ import model.User;
 public class PostManager {
 	
 	private static PostManager instance;
-	private static ConcurrentHashMap<Long,Post> allPosts; //postId-> post
+	private ConcurrentHashMap<Long,Post> allPosts; //postId-> post
 
 	
 	private PostManager() {
@@ -59,11 +61,12 @@ public class PostManager {
 		return true;
 	}
 	
-	public void addNewPost(String postName, String userName, String postDescription, Category category, LocalDateTime date, String destinationName, double longitude, double latitude, String pictureURL) {
+	public void addNewPost(String postName, String userName, String postDescription, Category category, LocalDateTime date, String destinationName, double longitude, double latitude, String pictureURL, String[] keywords, String videoURL) {
 		User u = UsersManager.getInstance().getRegisteredUsers().get(userName);
 		Post p;
 		try {
-			p = new Post(postName, category, postDescription, u, date, destinationName, longitude, latitude, pictureURL);
+			p = new Post(postName, category, postDescription, u, date, destinationName, longitude, latitude, pictureURL,videoURL);
+			p.addHashtags(keywords);
 			PostDAO.getInstance().addNewPost(p);
 			long id = p.getPostId();
 			allPosts.put(id, p);
@@ -73,5 +76,29 @@ public class PostManager {
 		}
 		
 	}
+	
+	public void deletePost(Post p){
+		allPosts.remove(p);
+		PostDAO.getInstance().deletePost(p);
+	}
+	
+	public List<Post> searchByName(String name){
+		ArrayList<Post> searchResults = new ArrayList<>();
+		for (Post post : allPosts.values()) {
+			if (post.getDestination().contains(name)) searchResults.add(post);
+		}
+		return Collections.unmodifiableList(searchResults);
+	}
+	
+	
+	public List<Post> searchByTag(String name){
+		ArrayList<Post> searchResults = new ArrayList<>();
+		for (Post post : allPosts.values()) {
+			if (post.getPostName().contains(name)) searchResults.add(post);
+		}
+		return Collections.unmodifiableList(searchResults);
+	}
+	
+	
 	
 }

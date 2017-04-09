@@ -9,18 +9,40 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Update profile</title>
 </head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+	function uploadPicture()
+	{
+		$.ajax({
+			  type: "POST",
+			  url: "uploadProfilePicture",
+			  data: new FormData(document.getElementById("fileForm")),
+	          enctype: 'multipart/form-data',
+			  success: function(result){
+	       			document.getElementById("response").innerHTML  =result;
+		    		},
+			  error: function(result){
+	       			document.getElementById("response").innerHTML  =result;
+		    		}
+			});
+		
+	}
+	</script>
 <body>
 <jsp:include page="header.jsp" />
 <br>
 <br>
 <c:if test="${sessionScope.username !=null }">
 <h5 id = "error"><% out.println(UpdateInfoServlet.getErrorMsg());  %></h5>
+<img src="PictureServlet?username=${sessionScope.username }">
 <h1>Upload Profile Picture</h1>
-        <form name="fileform" method="post" action="uploadProfilePicture" enctype="multipart/form-data">
+        <form name="fileform" id=" fileForm" enctype="multipart/form-data"> 
             <label for="photo"> Select picture :  </label>
-            <input type="file" name="photo" size="50" placeholder="Upload Your Image" required/><br><br>
-            <input type="submit" value="Submit">
-        </form>
+            <input type="file" id = "fileInput" name="photo" size="50" placeholder="Upload Your Image" required/><br><br>
+            <button type="submit" onclick="uploadPicture()" >Submit</button>
+            </form>
+        <h5 id="response"></h5>
 <h1>Update Info</h1>
 <form action="updateInfo" method="post">
 Username: <input type="text" value="${ username }" name="newUsername"></br>

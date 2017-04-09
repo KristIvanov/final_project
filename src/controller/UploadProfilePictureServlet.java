@@ -34,10 +34,16 @@ public class UploadProfilePictureServlet extends HttpServlet {
 				if(!dir.exists()){
 					dir.mkdir();
 				}
+				if(UsersManager.getInstance().getRegisteredUsers().get(username).getPhotoURL()!=null) {
+					File usersPicture = new File(UsersManager.getInstance().getRegisteredUsers().get(username).getPhotoURL());
+					usersPicture.delete();
+				}
 				File profilePicFile = new File(dir, username+"-profile-pic."+ profilePic.getContentType().split("/")[1]);
 				Files.copy(profilePicStream, profilePicFile.toPath());
 				UsersManager.getInstance().addProfilePic(username, profilePicFile.getAbsolutePath());
+				response.setStatus(200);
 				response.getWriter().append("Picture successfully uploaded!");
+				//TODO figure out why the ajax is not working as it supposed to be?!?!?
 
 			}
 	}

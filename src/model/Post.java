@@ -21,10 +21,12 @@ public class Post {
 	private String destination;
 	private double longitude;
 	private double latitude;
+	private ArrayList<String> hashtags;
+	private String videoURL;
 	
 	
 	public Post(String postName,Category category, String description, User author, LocalDateTime date,
-			String destinationName, double longitude, double latitude, String pictureURL) throws InvalidInputException {
+			String destinationName, double longitude, double latitude, String pictureURL, String videoURl) throws InvalidInputException {
 		
 		if(checkString(postName)) {
 			this.postName=postName;
@@ -42,12 +44,9 @@ public class Post {
 		else {
 			throw new InvalidInputException("Invalid post description!");
 		}
-		if(checkString(pictureURL)) {
-			this.pictureURL= pictureURL;
-		}
-		else {
-			throw new InvalidInputException("Invalid picture url!");
-		}
+
+		this.pictureURL=pictureURL; // no checking for string!=null and empty string, cause picture and video can be null if the post doesn't contain one
+		this.videoURL=videoURl;
 		
 		this.author = author;
 		this.date = date;
@@ -63,6 +62,9 @@ public class Post {
 		this.postId = postId;
 	}
 
+	public String getVideoURL() {
+		return videoURL;
+	}
 	
 	public void addComment(Comment c) {
 		this.comments.add(c);
@@ -124,6 +126,16 @@ public class Post {
 			return true;
 		}
 		return false;
+	}
+	
+	public void addHashtags(String[] args){
+		for (String string : args) {
+			hashtags.add(string);
+		}
+	}
+	
+	public List<String> getHashtags() {
+		return Collections.unmodifiableList(hashtags);
 	}
 	
 	

@@ -1,7 +1,10 @@
+<%@page import="java.util.Map.Entry"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="controller.AddPostServlet"%>
+<%@page import="dbModel.CategoryDAO" %>
+<%@page import="model.Category" %>
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
-<%@ page import="controller.RegisterServlet" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -23,15 +26,17 @@ Post description:<textarea name="postdescription" value="${postdescription }" co
 Destination name: <input type="text" value="${ destinationname }" name="destinationname" required></br>
 Longitude: <input type="text" value="${ longitude }" name="longitude" required></br>
 latitude: <input type="text" value="${latitude}" name="latitude" required></br>
+Enter key words separated by spaces: <input type="text" value="${ hashtags }" name="hashtags" ></br>
 Categories: 
 <select name = "category">
-                <option value="beaches">Beaches</option>
-                <option value="nature">Nature</option>
-                <option value="mountain">Mountain</option>
-                <option value="forest">Forest</option>
-                </select>
-  <label for="photo"> Select pictures :  </label>
-            <input type="file" name="photo" size="50" placeholder="Upload Your Image" required/><br><br>
+<c:forEach var="category" items="${CategoryDAO.getInstance().categories}">
+                <option value="${category.name}"><c:out value="${category.name}"></c:out></option>
+                </c:forEach>
+                </select> <br>
+  <label for="photo"> Select picture:  </label> <br>
+<input type="file" name="photo" size="50" placeholder="Upload Your Image" ><br><br>
+ <label for="video"> Select video:  </label> <br>
+<input type="file" name="video" size="50" placeholder="Upload Your Video" ><br><br>
 <input type="submit" value = "Add post"></br>
 </form>
 </c:if>

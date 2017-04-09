@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import managers.PostManager;
@@ -21,25 +23,10 @@ private static CommentDAO instance;
 
 	private CommentDAO() {
 		comments= new ConcurrentHashMap<>();
-		try {
-			comments= getALlComments();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static synchronized CommentDAO getInstance() {
-		if(instance == null) 
-			instance = new CommentDAO();
-		return instance;
-	}
-	
-	private ConcurrentHashMap<Long, Comment> getALlComments() throws SQLException {
-		ConcurrentHashMap<Long, Comment> comments = new ConcurrentHashMap<>();
 		Connection con = DBManager.getInstance().getConnection();
 		try {
 			con.setAutoCommit(false);
-			PreparedStatement ps = con.prepareStatement("SELECT  comment_id,author_id,text,posts_post_id FROM comments");
+			PreparedStatement ps = con.prepareStatement("SELECT comment_id,author_id,text,posts_post_id FROM comments");
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
 				PreparedStatement authorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
@@ -56,18 +43,48 @@ private static CommentDAO instance;
 				authorST.close();
 			}
 		} catch (SQLException e) {
-			con.rollback();
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 		} catch (InvalidInputException e) {
 			e.printStackTrace();
 		}
 		finally {
-			con.setAutoCommit(true);
+			try {
+				con.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
-		
-		return comments;
-		
 	}
+	
+	public static synchronized CommentDAO getInstance() {
+		if(instance == null) 
+			instance = new CommentDAO();
+		return instance;
+	}
+	
+	public Map<Long, Comment> getALlComments() {
+		return Collections.unmodifiableMap(comments);
+	}
+	
+
+	public synchronized void deleteComment(Comment com){
+		PreparedStatement prepSt;
+		  try {
+			prepSt = DBManager.getInstance().getConnection().prepareStatement("DELETE FROM comments WHERE comment_id=?");
+			prepSt.setLong(1, com.getComment_id());
+			prepSt.executeUpdate();
+			prepSt.close();
+			System.out.println("Post successfully deleted!");
+		  } catch (Exception e) {
+			 System.out.println(e.getMessage());
+		  }
+	}
+	
 	
 	//TODO add comment and delete comment
 	//TODO create add comment jsp and servlet

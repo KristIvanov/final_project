@@ -14,7 +14,6 @@ import java.util.Set;
 
 import managers.UsersManager;
 import model.Category;
-import model.Comment;
 import model.InvalidInputException;
 import model.Post;
 import model.User;
@@ -38,12 +37,12 @@ public class PostDAO {
 			try { 
 				con.setAutoCommit(false);
 				Statement postST = con.createStatement();
-				ResultSet postRS = postST.executeQuery("SELECT post_id,post_name,post_description,author_id,categories_category_id,date,destination_name,longitude,latitude,picture_url FROM posts ");
+				ResultSet postRS = postST.executeQuery("SELECT post_id,post_name,post_description,author_id,categories_category_id,date,destination_name,longitude,latitude,picture_url,video_url FROM posts ");
 				while (postRS.next()) {
 					long post_id = postRS.getLong("post_id");
 		    	
 					//get the category
-					Category category = CategoryDAO.getInstance().categories.get(postRS.getLong("categories_category_id"));
+					Category category = CategoryDAO.getInstance().getALlCategoriesByID().get(postRS.getLong("categories_category_id"));
 		  		
 					//get the author
 					PreparedStatement authorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
@@ -51,6 +50,7 @@ public class PostDAO {
 			  		ResultSet authorRS = authorST.executeQuery();
 			  		authorRS.next();
 			  		User author = UsersManager.getInstance().getRegisteredUsers().get(authorRS.getString("username"));
+			  	
 			  		//create the post and add it in the hashset
 			  		Post post = new Post	(postRS.getString("post_name"),
 			  								category,
@@ -60,24 +60,17 @@ public class PostDAO {
 			  								postRS.getString("destination_name"),
 			  								postRS.getDouble("longitude"),
 			  								postRS.getDouble("latitude"),
-			  								postRS.getString("picture_url"));
+			  								postRS.getString("picture_url"),
+			  								postRS.getString("video_url"));
 			  		posts.add(post);
 			    	post.setPostId(post_id);
 			  		
 			  		//get all comments
-			  		PreparedStatement commentsST = con.prepareStatement("SELECT author_id,text FROM comments");
+			  		PreparedStatement commentsST = con.prepareStatement("SELECT comment_id FROM comments WHERE posts_post_id =?");
+			  		commentsST.setLong(1, post_id);
 			  		ResultSet commentsRS = commentsST.executeQuery();
 			  		while(commentsRS.next()) {
-			  			PreparedStatement commentAuthorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
-			  			commentAuthorST.setLong(1, commentsRS.getLong("author_id"));
-				  		ResultSet commentAuthorRS = commentAuthorST.executeQuery();
-				  		authorRS.next();
-				  		User commentAuthor = UsersManager.getInstance().getRegisteredUsers().get(commentAuthorRS.getString("username"));
-				  		post.addComment(new Comment(	commentAuthor,
-				  										commentsRS.getString("text"), 
-				  										post));
-				  		commentAuthorRS.close();
-				  		commentAuthorST.close();
+			  			post.addComment(CommentDAO.getInstance().comments.get(commentsRS.getLong("comment_id")));
 			  		}
 			  		authorRS.close();
 			  		authorST.close();
@@ -137,7 +130,20 @@ public class PostDAO {
 				
 	}
 	
-	//TODO delete post
+
+	public synchronized void deletePost(Post p){
+		PreparedStatement prepSt;
+		  try {
+			prepSt = DBManager.getInstance().getConnection().prepareStatement("DELETE TABLE posts WHERE post_id=?");
+			prepSt.setLong(1, p.getPostId());
+			prepSt.executeUpdate();
+			prepSt.close();
+			System.out.println("Post successfully deleted!");
+		  } catch (Exception e) {
+			 System.out.println(e.getMessage());
+		  }
+	}
+	
 }
 	
 	

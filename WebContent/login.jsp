@@ -23,7 +23,7 @@ Password: <input type="password" placeholder="enter password" name="password" re
 </form>
 <a href="register.jsp">Don`t have an account? Register here.</a>
 </c:if>
-<c:if test="${sessionScope.username ==null }">
+<c:if test="${sessionScope.username != null }">
 <jsp:forward page="settings.jsp"></jsp:forward>
 </c:if>
 </body>
