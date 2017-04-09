@@ -52,6 +52,7 @@ public class Post {
 		this.date = date;
 		this.likers = new HashSet<>();
 		this.comments = new ArrayList<>();
+		this.hashtags= new ArrayList<>();
 	}
 	
 	public long getPostId() {

@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,7 +28,7 @@ private static CommentDAO instance;
 		Connection con = DBManager.getInstance().getConnection();
 		try {
 			con.setAutoCommit(false);
-			PreparedStatement ps = con.prepareStatement("SELECT comment_id,author_id,text,posts_post_id FROM comments");
+			PreparedStatement ps = con.prepareStatement("SELECT comment_id,author_id,text,posts_post_i,dated FROM comments");
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
 				PreparedStatement authorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
@@ -35,7 +37,9 @@ private static CommentDAO instance;
 		  		authorRS.next();
 		  		User author = UsersManager.getInstance().getRegisteredUsers().get(authorRS.getString("username"));
 		  		Post post = PostManager.getInstance().getPosts().get(rs.getLong("posts_post_id"));
-				comments.put(rs.getLong("comment_id"), new Comment(author, rs.getString("text"), post));
+		  		Comment comment = new Comment(author, rs.getString("text"), post,rs.getTimestamp("date").toLocalDateTime());
+				comments.put(rs.getLong("comment_id"), comment);
+				comment.setComment_id(rs.getLong("comment_id"));
 				con.commit();
 				rs.close();
 				ps.close();
@@ -85,9 +89,36 @@ private static CommentDAO instance;
 		  }
 	}
 	
+	public synchronized void addNewComment(Comment comment) {
+		Connection con = DBManager.getInstance().getConnection();
+		PreparedStatement ps = null;
+		
+		try {
+			ps = con.prepareStatement("INSERT INTO comments (author_id,text,posts_post_id,date) VALUES (?,?,?", Statement.RETURN_GENERATED_KEYS);
+			ps.setLong(1, comment.getAuthor().getUserId());
+			ps.setString(2, comment.getText());
+			ps.setLong(3, comment.getPost().getPostId());
+			ps.setTimestamp(4, Timestamp.valueOf(comment.getDate()));
+			ps.executeUpdate();
+			
+			ResultSet rs = ps.getGeneratedKeys();
+			rs.next();
+			long commentId = rs.getLong(1);
+			comment.setComment_id(commentId);;
+			rs.close();
+			ps.close();
+			System.out.println("Comment added successfully");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+				
+	}
 	
-	//TODO add comment and delete comment
+
+}
+
 	//TODO create add comment jsp and servlet
 	
 	
-}
+

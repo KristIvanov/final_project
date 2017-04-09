@@ -48,6 +48,7 @@ public class AddPostServlet extends HttpServlet {
 			System.out.println(longitude);
 			String hashtags = req.getParameter("hashtags").trim();
 			String[] keywords = hashtags.split(" ");
+			System.out.println(keywords.length);
 	        String postPicUrl=null;
 			if(req.getPart("photo") != null) {
 				Part postPic = req.getPart("photo");//handles data from <input type=file name=photo>
