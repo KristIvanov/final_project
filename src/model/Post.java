@@ -3,9 +3,7 @@ package model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Post {
 	
@@ -16,7 +14,7 @@ public class Post {
 	private String description;
 	private User author;
 	private LocalDateTime date;
-	private HashSet<User> likers;
+	private int likes;
 	private ArrayList<Comment> comments;
 	private String destination;
 	private double longitude;
@@ -26,7 +24,7 @@ public class Post {
 	
 	
 	public Post(String postName,Category category, String description, User author, LocalDateTime date,
-			String destinationName, double longitude, double latitude, String pictureURL, String videoURl) throws InvalidInputException {
+			String destinationName, double longitude, double latitude, String pictureURL, String videoURl,int likes) throws InvalidInputException {
 		
 		if(checkString(postName)) {
 			this.postName=postName;
@@ -44,13 +42,17 @@ public class Post {
 		else {
 			throw new InvalidInputException("Invalid post description!");
 		}
+		if(likes>=0) {
+			this.likes=likes;
+		} else {
+			throw new InvalidInputException("Invalid likes!");
+		}
 
 		this.pictureURL=pictureURL; // no checking for string!=null and empty string, cause picture and video can be null if the post doesn't contain one
 		this.videoURL=videoURl;
 		
 		this.author = author;
 		this.date = date;
-		this.likers = new HashSet<>();
 		this.comments = new ArrayList<>();
 		this.hashtags= new ArrayList<>();
 	}
@@ -71,11 +73,6 @@ public class Post {
 		this.comments.add(c);
 	}
 	
-	public void addLiker(User u) {
-		this.likers.add(u);
-	}
-	
-	
 
 	public String getPictureURL() {
 		return pictureURL;
@@ -92,9 +89,11 @@ public class Post {
 	public LocalDateTime getDate() {
 		return date;
 	}
-
-	public Set<User> getLikers() {
-		return Collections.unmodifiableSet(likers);
+	public int getLikes() {
+		return likes;
+	}
+	public void like() {
+		this.likes++;
 	}
 
 	public List<Comment> getComments() {

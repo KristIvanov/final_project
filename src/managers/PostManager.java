@@ -65,7 +65,7 @@ public class PostManager {
 		User u = UsersManager.getInstance().getRegisteredUsers().get(userName);
 		Post p;
 		try {
-			p = new Post(postName, category, postDescription, u, date, destinationName, longitude, latitude, pictureURL,videoURL);
+			p = new Post(postName, category, postDescription, u, date, destinationName, longitude, latitude, pictureURL,videoURL,0);
 			p.addHashtags(keywords);
 			PostDAO.getInstance().addNewPost(p);
 			long id = p.getPostId();
@@ -76,6 +76,10 @@ public class PostManager {
 		}
 		
 	}
+	public void likePost(Post p) {
+		p.like();
+		PostDAO.getInstance().likePost(p);
+	}
 	
 	public void deletePost(Post p){
 		allPosts.remove(p);
@@ -85,7 +89,9 @@ public class PostManager {
 	public List<Post> searchByName(String name){
 		ArrayList<Post> searchResults = new ArrayList<>();
 		for (Post post : allPosts.values()) {
-			if (post.getDestination().contains(name)) searchResults.add(post);
+			if (post.getDestination().contains(name)) {
+				searchResults.add(post);
+			}
 		}
 		return Collections.unmodifiableList(searchResults);
 	}
@@ -94,10 +100,14 @@ public class PostManager {
 	public List<Post> searchByTag(String name){
 		ArrayList<Post> searchResults = new ArrayList<>();
 		for (Post post : allPosts.values()) {
-			if (post.getPostName().contains(name)) searchResults.add(post);
+			if (post.getPostName().contains(name)) {
+				searchResults.add(post);
+			}
 		}
 		return Collections.unmodifiableList(searchResults);
 	}
+	
+	//sort posts by likes and date - create treesets??
 	
 	
 	

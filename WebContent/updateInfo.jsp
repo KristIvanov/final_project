@@ -35,7 +35,7 @@
 <br>
 <c:if test="${sessionScope.username !=null }">
 <h5 id = "error"><% out.println(UpdateInfoServlet.getErrorMsg());  %></h5>
-<img src="PictureServlet?username=${sessionScope.username }">
+<img src="PictureServlet?username=${sessionScope.username }" height=300 width="300">
 <h1>Upload Profile Picture</h1>
         <form name="fileform" id=" fileForm" enctype="multipart/form-data"> 
             <label for="photo"> Select picture :  </label>

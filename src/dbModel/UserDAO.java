@@ -142,7 +142,7 @@ public class UserDAO {
   public  void deleteUser(User u) {
 	  PreparedStatement prepSt;
 	  try {
-		prepSt = DBManager.getInstance().getConnection().prepareStatement("DELETE FROM TABLE users WHERE user_id=?");
+		prepSt = DBManager.getInstance().getConnection().prepareStatement("DELETE FROM users WHERE user_id=?");
 		prepSt.setLong(1, u.getUserId());
 		prepSt.executeUpdate();
 		prepSt.close();

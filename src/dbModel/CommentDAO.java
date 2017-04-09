@@ -118,7 +118,7 @@ private static CommentDAO instance;
 
 }
 
-	//TODO create add comment jsp and servlet
+	//TODO create add comment jsp
 	
 	
 

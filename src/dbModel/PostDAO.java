@@ -37,7 +37,7 @@ public class PostDAO {
 			try { 
 				con.setAutoCommit(false);
 				Statement postST = con.createStatement();
-				ResultSet postRS = postST.executeQuery("SELECT post_id,post_name,post_description,author_id,categories_category_id,date,destination_name,longitude,latitude,picture_url,video_url FROM posts ");
+				ResultSet postRS = postST.executeQuery("SELECT post_id,post_name,post_description,author_id,categories_category_id,date,destination_name,longitude,latitude,picture_url,video_url,likes FROM posts ");
 				while (postRS.next()) {
 					long post_id = postRS.getLong("post_id");
 		    	
@@ -61,7 +61,8 @@ public class PostDAO {
 			  								postRS.getDouble("longitude"),
 			  								postRS.getDouble("latitude"),
 			  								postRS.getString("picture_url"),
-			  								postRS.getString("video_url"));
+			  								postRS.getString("video_url"),
+			  								postRS.getInt("likes"));
 			  		posts.add(post);
 			    	post.setPostId(post_id);
 			  		
@@ -103,7 +104,7 @@ public class PostDAO {
 		PreparedStatement ps = null;
 		
 		try {
-			ps = con.prepareStatement("INSERT INTO posts (post_name,author_id,post_description,categories_category_id,date,destination_name,longitude,latitude,picture_url) VALUES (?,?,?,(SELECT category_id FROM categories WHERE name=?),?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+			ps = con.prepareStatement("INSERT INTO posts (post_name,author_id,post_description,categories_category_id,date,destination_name,longitude,latitude,picture_url,video_url) VALUES (?,?,?,(SELECT category_id FROM categories WHERE name=?),?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, p.getPostName());
 			ps.setLong(2, p.getAuthor().getUserId());
 			ps.setString(3, p.getDescription());
@@ -114,6 +115,7 @@ public class PostDAO {
 			ps.setBigDecimal(7, new BigDecimal(p.getLongitude()));
 			ps.setBigDecimal(8, new BigDecimal(p.getLatitude()));
 			ps.setString(9, p.getPictureURL());
+			ps.setString(10, p.getVideoURL());
 			ps.executeUpdate();
 			//TODO fix problem with double and decimal in DB
 			ResultSet rs = ps.getGeneratedKeys();
@@ -142,6 +144,20 @@ public class PostDAO {
 		  } catch (Exception e) {
 			 System.out.println(e.getMessage());
 		  }
+	}
+	
+	public synchronized void likePost(Post p) {
+		PreparedStatement prepSt;
+		try {
+			prepSt = DBManager.getInstance().getConnection().prepareStatement("UPDATE posts SET likes = ? WHERE user_id=?");
+			prepSt.setInt(1, p.getLikes());
+			prepSt.setLong(2, p.getPostId());
+			prepSt.executeUpdate();
+			prepSt.close();
+			System.out.println("Post likes successfully!");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

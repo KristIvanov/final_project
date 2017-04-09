@@ -22,7 +22,7 @@
 <h5 id = "error"><% out.println(AddPostServlet.getErrorMsg());  %></h5>
 <form action="addPost" method="post" enctype="multipart/form-data">
 Post name: <input type="text" value="${ postname }" name="postname" required></br>
-Post description:<input textarea name="postdescription" value="${postdescription }" cols="89" rows="10" placeholder="Add description"  required></textarea></br>
+Post description:<textarea name="postdescription" value="${postdescription }" cols="50" rows="8" placeholder="Add description"  required></textarea></br>
 Destination name: <input type="text" value="${ destinationname }" name="destinationname" required></br>
 Longitude: <input type="text" value="${ longitude }" name="longitude" required></br>
 latitude: <input type="text" value="${latitude}" name="latitude" required></br>
