@@ -3,6 +3,7 @@ package model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 public class Post {
@@ -14,13 +15,14 @@ public class Post {
 	private String description;
 	private User author;
 	private LocalDateTime date;
-	private int likes;
+	private int likes;//can delete and use likedBy.size()
 	private ArrayList<Comment> comments;
 	private String destination;
 	private double longitude;
 	private double latitude;
 	private ArrayList<String> hashtags;
 	private String videoURL;
+	private HashSet<User> likedBy;
 	
 	
 	public Post(String postName,Category category, String description, User author, LocalDateTime date,
@@ -90,10 +92,15 @@ public class Post {
 		return date;
 	}
 	public int getLikes() {
-		return likes;
+		return likedBy.size();
 	}
 	public void like() {
 		this.likes++;
+	}
+	
+	public void like(User u){
+		likedBy.add(u);
+		this.likes++;//can delete the whole int likes
 	}
 
 	public List<Comment> getComments() {
@@ -136,6 +143,11 @@ public class Post {
 	
 	public List<String> getHashtags() {
 		return Collections.unmodifiableList(hashtags);
+	}
+
+	public void addLiker(User user) {
+		likedBy.add(user);
+		
 	}
 	
 	

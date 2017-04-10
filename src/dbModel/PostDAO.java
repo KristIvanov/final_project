@@ -73,10 +73,20 @@ public class PostDAO {
 			  		while(commentsRS.next()) {
 			  			post.addComment(CommentDAO.getInstance().comments.get(commentsRS.getLong("comment_id")));
 			  		}
+			  		
+			  	//get all likers
+			  		PreparedStatement likersST = con.prepareStatement("SELECT liker_id FROM post_has_likers WHERE likedposts_post_id =?");
+			  		likersST.setLong(1, post_id);
+			  		ResultSet likersRS = likersST.executeQuery();
+			  		while(likersRS.next()) {
+			  			post.addLiker(UsersManager.getInstance().getRegisteredUsers().get(likersRS.getLong("liker_id")));
+			  		}
 			  		authorRS.close();
 			  		authorST.close();
 			  		commentsRS.close();
 			  		commentsST.close();
+			  		likersRS.close();
+			  		likersST.close();
 			  		postRS.close();
 			  		postST.close();
 			  		

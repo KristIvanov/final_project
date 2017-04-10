@@ -12,5 +12,10 @@
 	<br>
 	<br>
 	
+<form action="quickSearch" method="get">
+<input type="text" placeholder="Search TravelBook" name="searchFor" required></br>
+
+<input type="submit" value = "Quick Search"></br>
+</form>
 </body>
 </html>

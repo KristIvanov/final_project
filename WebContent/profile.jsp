@@ -52,7 +52,7 @@
 <!-- check if !userexists ? return user not found.jsp -->
 <!-- view picture -->
 
-<img src="PictureServlet?username=${sessionScope.username }">
+<img src="PictureServlet?username=${userviewed.username }">
 
 <!-- print username, first, last, email -->
 <table border="1" id="userInfo">
@@ -82,7 +82,7 @@
 
 <!-- tablica kato newsfeed, koqto se zapylva sprqmo gornite butoni -->
 <table border="1" id="printedPosts">
-	<c:forEach var="post" items="${sessionScope.userPosts}"> 
+	<c:forEach var="post" items="${request.userPosts}"> 
 				<tr>
 					<c:out value="${ post.date }"></c:out>
                     <p>date</p>

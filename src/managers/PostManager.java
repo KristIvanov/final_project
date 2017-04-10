@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -86,7 +87,7 @@ public class PostManager {
 		PostDAO.getInstance().deletePost(p);
 	}
 	
-	public List<Post> searchByName(String name){
+	public List<Post> searchByDestination(String name){
 		ArrayList<Post> searchResults = new ArrayList<>();
 		for (Post post : allPosts.values()) {
 			if (post.getDestination().contains(name)) {
@@ -97,17 +98,57 @@ public class PostManager {
 	}
 	
 	
-	public List<Post> searchByTag(String name){
+	public List<Post> searchByTags(String[] words){
 		ArrayList<Post> searchResults = new ArrayList<>();
 		for (Post post : allPosts.values()) {
-			if (post.getPostName().contains(name)) {
-				searchResults.add(post);
+			boolean containsAll = true;
+			for (int i = 0; i < words.length; i++) {
+				if (!post.getHashtags().contains(words[i])) {
+					containsAll = false;
+					break;
+				}
 			}
+			if (containsAll) searchResults.add(post);
 		}
 		return Collections.unmodifiableList(searchResults);
 	}
 	
+	public List<Post> orderByLikes(List<Post> posts){
+		Collections.sort(posts, new Comparator<Post>() {
+
+			@Override
+			public int compare(Post o1, Post o2) {
+				if (o1.getLikes() == o2.getLikes()) {
+					return o1.hashCode() - o2.hashCode();
+				}
+				return o1.getLikes() - o2.getLikes();
+			}
+		});
+		return posts;
+	}
+	
+	public List<Post> orderByDate(List<Post> posts){ //TODO ascending or descending ? 
+		Collections.sort(posts, new Comparator<Post>() {
+
+			@Override
+			public int compare(Post o1, Post o2) {
+				if (o1.getDate().isEqual(o2.getDate())){
+					return o1.hashCode() - o2.hashCode();
+				}
+				else if (o1.getDate().isAfter(o2.getDate())) {
+					return -1;
+				}
+				else {
+					return 1;
+				}
+			}
+		});
+		return posts;
+	}
 	//sort posts by likes and date - create treesets??
+	
+	
+	
 	
 	
 	

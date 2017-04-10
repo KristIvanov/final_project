@@ -1,12 +1,16 @@
 package managers;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import dbModel.UserDAO;
 import model.InvalidInputException;
+import model.Post;
 import model.User;
 
 public class UsersManager {
@@ -151,6 +155,32 @@ public class UsersManager {
 			User u = registeredUsers.get(username);
 			u.setPhotoURL(photoUrl);
 			UserDAO.getInstance().addProfilePic(u);
+		}
+
+		public List<User> searchUser(String words) {
+			ArrayList<User> searchResults = new ArrayList<>();
+			for (User user : registeredUsers.values()) {
+				if (user.getFirst_name().contains(words) || user.getLast_name().contains(words) || user.getUsername().contains(words) || (user.getFirst_name() + " " + user.getLast_name()).contains(words)){
+					searchResults.add(user);
+				}
+			}
+			return Collections.unmodifiableList(searchResults);
+		}
+		
+		public List<User> allUsersMostFollowed(){
+			ArrayList<User> sortedUsers = new ArrayList<>();
+			for (User user : registeredUsers.values()) {
+				sortedUsers.add(user);
+			}
+			Collections.sort(sortedUsers, new Comparator<User>() {
+
+				@Override
+				public int compare(User o1, User o2) {
+					if (o1.getFollowers().size() == o2.getFollowers().size()) return o1.hashCode() - o2.hashCode();
+					return o1.getFollowers().size() - o2.getFollowers().size();
+				}
+			});
+			return sortedUsers;
 		}
 		
 	  
