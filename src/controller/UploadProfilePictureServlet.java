@@ -27,7 +27,9 @@ public class UploadProfilePictureServlet extends HttpServlet {
 		if(ses.getAttribute("logged")!= null){
 			boolean logged = (Boolean) ses.getAttribute("logged");
 			if(logged){
+				
 				Part profilePic = request.getPart("photo");//handles data from <input type=file name=photo>
+				System.out.println(profilePic.getContentType());
 				InputStream profilePicStream = profilePic.getInputStream();
 				String username = (String) ses.getAttribute("username");
 				File dir = new File("C:\\travelBook\\usersProfilePics");
@@ -38,7 +40,7 @@ public class UploadProfilePictureServlet extends HttpServlet {
 					File usersPicture = new File(UsersManager.getInstance().getRegisteredUsers().get(username).getPhotoURL());
 					usersPicture.delete();
 				}
-				File profilePicFile = new File(dir, username+"-profile-pic."+ profilePic.getContentType().split("/")[1]);
+				File profilePicFile = new File(dir, username+"-profile-pic");
 				Files.copy(profilePicStream, profilePicFile.toPath());
 				UsersManager.getInstance().addProfilePic(username, profilePicFile.getAbsolutePath());
 				response.setStatus(200);

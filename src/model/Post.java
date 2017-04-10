@@ -15,7 +15,6 @@ public class Post {
 	private String description;
 	private User author;
 	private LocalDateTime date;
-	private int likes;//can delete and use likedBy.size()
 	private ArrayList<Comment> comments;
 	private String destination;
 	private double longitude;
@@ -26,7 +25,7 @@ public class Post {
 	
 	
 	public Post(String postName,Category category, String description, User author, LocalDateTime date,
-			String destinationName, double longitude, double latitude, String pictureURL, String videoURl,int likes) throws InvalidInputException {
+			String destinationName, double longitude, double latitude, String pictureURL, String videoURl, ArrayList<String> hashTags) throws InvalidInputException {
 		
 		if(checkString(postName)) {
 			this.postName=postName;
@@ -44,12 +43,6 @@ public class Post {
 		else {
 			throw new InvalidInputException("Invalid post description!");
 		}
-		if(likes>=0) {
-			this.likes=likes;
-		} else {
-			throw new InvalidInputException("Invalid likes!");
-		}
-
 		this.pictureURL=pictureURL; // no checking for string!=null and empty string, cause picture and video can be null if the post doesn't contain one
 		this.videoURL=videoURl;
 		
@@ -57,6 +50,7 @@ public class Post {
 		this.date = date;
 		this.comments = new ArrayList<>();
 		this.hashtags= new ArrayList<>();
+		this.hashtags=hashTags;
 	}
 	
 	public long getPostId() {
@@ -94,13 +88,9 @@ public class Post {
 	public int getLikes() {
 		return likedBy.size();
 	}
-	public void like() {
-		this.likes++;
-	}
 	
 	public void like(User u){
 		likedBy.add(u);
-		this.likes++;//can delete the whole int likes
 	}
 
 	public List<Comment> getComments() {

@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,7 +38,7 @@ public class PostDAO {
 			try { 
 				con.setAutoCommit(false);
 				Statement postST = con.createStatement();
-				ResultSet postRS = postST.executeQuery("SELECT post_id,post_name,post_description,author_id,categories_category_id,date,destination_name,longitude,latitude,picture_url,video_url,likes FROM posts ");
+				ResultSet postRS = postST.executeQuery("SELECT post_id,post_name,post_description,author_id,categories_category_id,date,destination_name,longitude,latitude,picture_url,video_url FROM posts ");
 				while (postRS.next()) {
 					long post_id = postRS.getLong("post_id");
 		    	
@@ -51,6 +52,15 @@ public class PostDAO {
 			  		authorRS.next();
 			  		User author = UsersManager.getInstance().getRegisteredUsers().get(authorRS.getString("username"));
 			  	
+			  		//get the hashtags
+			  		PreparedStatement hashtagsST = con.prepareStatement("SELECT hash_tag FROM posts_hash_tags WHERE post_id=?");
+			  		hashtagsST.setLong(1, post_id);
+			  		ResultSet hashtagsRS = hashtagsST.executeQuery();
+			  		ArrayList<String> hashtags = new ArrayList<>();
+			  		while(hashtagsRS.next()) {
+			  			hashtags.add(hashtagsRS.getString("hash_tag"));
+			  		}
+			  		
 			  		//create the post and add it in the hashset
 			  		Post post = new Post	(postRS.getString("post_name"),
 			  								category,
@@ -62,10 +72,23 @@ public class PostDAO {
 			  								postRS.getDouble("latitude"),
 			  								postRS.getString("picture_url"),
 			  								postRS.getString("video_url"),
-			  								postRS.getInt("likes"));
+			  								hashtags);
 			  		posts.add(post);
 			    	post.setPostId(post_id);
 			  		
+			    	//get the likers
+			  		PreparedStatement likersST = con.prepareStatement("SELECT liker_id FROM posts_has_likers WHERE liked_post_id=?");
+			  		likersST.setLong(1, post_id);
+			  		ResultSet likersRS = likersST.executeQuery();
+			  		while (likersRS.next()) {
+			  			likersST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
+				  		likersST.setLong(1, postRS.getLong("author_id"));
+				  		ResultSet rs = authorST.executeQuery();
+				  		rs.next();
+				  		User liker = UsersManager.getInstance().getRegisteredUsers().get(rs.getString("username"));
+			  			post.addLiker(liker);
+			  			rs.close();
+			  		}
 			  		//get all comments
 			  		PreparedStatement commentsST = con.prepareStatement("SELECT comment_id FROM comments WHERE posts_post_id =?");
 			  		commentsST.setLong(1, post_id);
@@ -73,14 +96,7 @@ public class PostDAO {
 			  		while(commentsRS.next()) {
 			  			post.addComment(CommentDAO.getInstance().comments.get(commentsRS.getLong("comment_id")));
 			  		}
-			  		
-			  	//get all likers
-			  		PreparedStatement likersST = con.prepareStatement("SELECT liker_id FROM post_has_likers WHERE likedposts_post_id =?");
-			  		likersST.setLong(1, post_id);
-			  		ResultSet likersRS = likersST.executeQuery();
-			  		while(likersRS.next()) {
-			  			post.addLiker(UsersManager.getInstance().getRegisteredUsers().get(likersRS.getLong("liker_id")));
-			  		}
+	
 			  		authorRS.close();
 			  		authorST.close();
 			  		commentsRS.close();
@@ -89,6 +105,9 @@ public class PostDAO {
 			  		likersST.close();
 			  		postRS.close();
 			  		postST.close();
+			  		hashtagsST.close();
+			  		hashtagsRS.close();
+			  		
 			  		
 			  		con.commit();
 		      }
@@ -114,6 +133,7 @@ public class PostDAO {
 		PreparedStatement ps = null;
 		
 		try {
+			con.setAutoCommit(false);
 			ps = con.prepareStatement("INSERT INTO posts (post_name,author_id,post_description,categories_category_id,date,destination_name,longitude,latitude,picture_url,video_url) VALUES (?,?,?,(SELECT category_id FROM categories WHERE name=?),?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, p.getPostName());
 			ps.setLong(2, p.getAuthor().getUserId());
@@ -132,12 +152,33 @@ public class PostDAO {
 			rs.next();
 			long postId = rs.getLong(1);
 			p.setPostId(postId);
+			//insert posts hashtags 
+			for(String s: p.getHashtags()) {
+				ps = con.prepareStatement("INSERT INTO posts_hash_tags (post_id, hash_tag) VALUES (?,?)");
+				ps.setLong(1, p.getPostId());
+				ps.setString(2, s);
+				ps.executeUpdate();
+			}
+			con.commit();
 			rs.close();
 			ps.close();
 			System.out.println("Post added successfully");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		finally {
+			try {
+				con.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 				
 	}
@@ -156,15 +197,15 @@ public class PostDAO {
 		  }
 	}
 	
-	public synchronized void likePost(Post p) {
+	public synchronized void likePost(Post p,User u) {
 		PreparedStatement prepSt;
 		try {
-			prepSt = DBManager.getInstance().getConnection().prepareStatement("UPDATE posts SET likes = ? WHERE user_id=?");
-			prepSt.setInt(1, p.getLikes());
+			prepSt = DBManager.getInstance().getConnection().prepareStatement("INSERT INTO posts_has_likers (post_id,liker_id) VALUES (?,?)");
 			prepSt.setLong(2, p.getPostId());
+			prepSt.setLong(2, u.getUserId());
 			prepSt.executeUpdate();
 			prepSt.close();
-			System.out.println("Post likes successfully!");
+			System.out.println("Post liked successfully!");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

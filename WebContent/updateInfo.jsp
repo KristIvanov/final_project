@@ -14,11 +14,15 @@
 
 	function uploadPicture()
 	{
+		
+		 var fd = new FormData(document.getElementById("fileForm"));
+		 fd.append("photo", document.getElementById("fileInput"));
 		$.ajax({
-			  type: "POST",
 			  url: "uploadProfilePicture",
-			  data: new FormData(document.getElementById("fileForm")),
-	          enctype: 'multipart/form-data',
+			  type: "POST",
+			  data: fd,
+			  processData: false,
+			  contentType: "multipart/form-data; boundary=gc0p4Jq0M2Yt08jU534c0p",
 			  success: function(result){
 	       			document.getElementById("response").innerHTML  =result;
 		    		},
@@ -37,11 +41,11 @@
 <h5 id = "error"><% out.println(UpdateInfoServlet.getErrorMsg());  %></h5>
 <img src="PictureServlet?username=${sessionScope.username }" height=300 width="300">
 <h1>Upload Profile Picture</h1>
-        <form name="fileform" id=" fileForm" enctype="multipart/form-data"> 
+        <form name="fileform" id=" fileForm" enctype="multipart/form-data" onsubmit="return uploadPicture()"> 
             <label for="photo"> Select picture :  </label>
             <input type="file" id = "fileInput" name="photo" size="50" placeholder="Upload Your Image" required/><br><br>
-            <button type="submit" onclick="uploadPicture()" >Submit</button>
-            </form>
+ 			<input type="submit" value="Upload" />           
+  </form>
         <h5 id="response"></h5>
 <h1>Update Info</h1>
 <form action="updateInfo" method="post">

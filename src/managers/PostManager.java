@@ -66,7 +66,7 @@ public class PostManager {
 		User u = UsersManager.getInstance().getRegisteredUsers().get(userName);
 		Post p;
 		try {
-			p = new Post(postName, category, postDescription, u, date, destinationName, longitude, latitude, pictureURL,videoURL,0);
+			p = new Post(postName, category, postDescription, u, date, destinationName, longitude, latitude, pictureURL,videoURL,new ArrayList<>());
 			p.addHashtags(keywords);
 			PostDAO.getInstance().addNewPost(p);
 			long id = p.getPostId();
@@ -77,9 +77,9 @@ public class PostManager {
 		}
 		
 	}
-	public void likePost(Post p) {
-		p.like();
-		PostDAO.getInstance().likePost(p);
+	public void likePost(Post p,User u) {
+		p.like(u);
+		PostDAO.getInstance().likePost(p,u);
 	}
 	
 	public void deletePost(Post p){
