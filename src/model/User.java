@@ -161,6 +161,23 @@ public class User {
         return m.matches();
 	}
 
+	public void follow(User u){
+		if (!this.doesFollow(u)){
+			u.followers.add(this);
+			this.following.add(u);
+		}
+	}
+	
+	public void unfollow(User u){
+		if (this.doesFollow(u)){
+			u.followers.remove(this);
+			this.following.remove(u);
+		}
+	}
+	
+	public boolean doesFollow(User u){
+		return u.followers.contains(this);
+	}
 	
 	
 	

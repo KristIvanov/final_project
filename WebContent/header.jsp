@@ -32,6 +32,7 @@
 		<a href = "<%= link1%>" ><%= button1%></a>
 		<a href = "<%= link2%>" ><%= button2%></a>
 	</div>
+	<jsp:include page="quickSearch.jsp" />
 	<font face="Verdana" size="7">TravelBook</font><br>
 	<hr>
 </body>
