@@ -34,9 +34,7 @@ public class PictureServlet extends HttpServlet {
 	}
 	 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println();
 		String requestedUsername = request.getParameter("username");
-		System.out.println(requestedUsername);
 
 		if(requestedUsername != null){
 			User user = UsersManager.getInstance().getRegisteredUsers().get(requestedUsername);

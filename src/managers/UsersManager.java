@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import dbModel.UserDAO;
 import model.InvalidInputException;
@@ -16,25 +17,23 @@ import model.User;
 public class UsersManager {
 	//concurrenthashmap because a lot of threads can use it
 	  private ConcurrentHashMap<String, User> registeredUsers; //username--> user
-	  private static UsersManager instance;
+	  private static UsersManager instance=new UsersManager();
 	  
 	  private UsersManager() {
 	   
 		registeredUsers = new ConcurrentHashMap<>();
-	   
-	    try {
-			for (User u : UserDAO.getInstance().getAllUsers()) {
-			  registeredUsers.put(u.getUsername(), u);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+	   try {
+		   Set<User> users = UserDAO.getInstance().getAllUsers();
+		   for (User u : users) {
+			   registeredUsers.put(u.getUsername(), u);
+		   }
+		} catch (SQLException e1) {
+			e1.printStackTrace();
 		}
-	  }
+	    
+	 }
 	  
 	  public static synchronized UsersManager getInstance() {
-	    if (instance == null) {
-	      instance = new UsersManager();
-	    }
 	    return instance;
 	  }
 	  

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -29,7 +30,8 @@ public class UploadProfilePictureServlet extends HttpServlet {
 			if(logged){
 				
 				Part profilePic = request.getPart("photo");//handles data from <input type=file name=photo>
-				System.out.println(profilePic.getContentType());
+				String extension = request.getParameter("extension");
+				System.out.println(request.getParameter("extension"));
 				InputStream profilePicStream = profilePic.getInputStream();
 				String username = (String) ses.getAttribute("username");
 				File dir = new File("C:\\travelBook\\usersProfilePics");
@@ -40,7 +42,7 @@ public class UploadProfilePictureServlet extends HttpServlet {
 					File usersPicture = new File(UsersManager.getInstance().getRegisteredUsers().get(username).getPhotoURL());
 					usersPicture.delete();
 				}
-				File profilePicFile = new File(dir, username+"-profile-pic");
+				File profilePicFile = new File(dir, username+"-profile-pic."+extension);
 				Files.copy(profilePicStream, profilePicFile.toPath());
 				UsersManager.getInstance().addProfilePic(username, profilePicFile.getAbsolutePath());
 				response.setStatus(200);

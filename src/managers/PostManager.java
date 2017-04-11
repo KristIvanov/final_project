@@ -17,7 +17,7 @@ import model.User;
 
 public class PostManager {
 	
-	private static PostManager instance;
+	private static PostManager instance=new PostManager();
 	private ConcurrentHashMap<Long,Post> allPosts; //postId-> post
 
 	
@@ -33,8 +33,6 @@ public class PostManager {
 	}
 	
 	public static synchronized PostManager getInstance() {
-	    if (instance == null)
-	      instance = new PostManager();
 	    return instance;
 	  }
 

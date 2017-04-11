@@ -11,23 +11,22 @@
 </head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 <script type="text/javascript">
-
+z
 	function uploadPicture()
-	{
-		
-		 var fd = new FormData(document.getElementById("fileForm"));
-		 fd.append("photo", document.getElementById("fileInput"));
+	{ 
+		 var fd = new FormData(document.getElementById("fileform"));
+		 fd.append("photo", document.getElementById("fileInput").files[0]);
+         var fileExtension = document.getElementById("fileInput").value.split('.').pop().toLowerCase();
+         fd.append("extension", fileExtension);
 		$.ajax({
 			  url: "uploadProfilePicture",
 			  type: "POST",
 			  data: fd,
 			  processData: false,
-			  contentType: "multipart/form-data; boundary=gc0p4Jq0M2Yt08jU534c0p",
-			  success: function(result){
-	       			document.getElementById("response").innerHTML  =result;
-		    		},
-			  error: function(result){
-	       			document.getElementById("response").innerHTML  =result;
+			  contentType: false,
+			  function(result){
+	       			document.getElementById("response").innerHTML = result;
+	       			$('#picture').attr("src","PictureServlet?username=${sessionScope.username }");
 		    		}
 			});
 		
@@ -39,7 +38,7 @@
 <br>
 <c:if test="${sessionScope.username !=null }">
 <h5 id = "error"><% out.println(UpdateInfoServlet.getErrorMsg());  %></h5>
-<img src="PictureServlet?username=${sessionScope.username }" height=300 width="300">
+<img id="picture" src="PictureServlet?username=${sessionScope.username }" height=300 width="300">
 <h1>Upload Profile Picture</h1>
         <form name="fileform" id=" fileForm" enctype="multipart/form-data" onsubmit="return uploadPicture()"> 
             <label for="photo"> Select picture :  </label>

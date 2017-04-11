@@ -21,14 +21,12 @@ import model.User;
 
 public class PostDAO {
 
-	private static PostDAO instance;
+	private static PostDAO instance=new PostDAO();
 	
 	private PostDAO() {
 	}
 	
 	public static synchronized PostDAO getInstance() {
-		if(instance == null) 
-			instance = new PostDAO();
 		return instance;
 	}
 	
@@ -103,14 +101,15 @@ public class PostDAO {
 			  		commentsST.close();
 			  		likersRS.close();
 			  		likersST.close();
-			  		postRS.close();
-			  		postST.close();
+			  		
 			  		hashtagsST.close();
 			  		hashtagsRS.close();
 			  		
 			  		
 			  		con.commit();
 		      }
+				postRS.close();
+		  		postST.close();
 			}
 			catch (SQLException e) {
 			    System.out.println("Something went wrong while trying to get all posts!");
@@ -134,20 +133,19 @@ public class PostDAO {
 		
 		try {
 			con.setAutoCommit(false);
-			ps = con.prepareStatement("INSERT INTO posts (post_name,author_id,post_description,categories_category_id,date,destination_name,longitude,latitude,picture_url,video_url) VALUES (?,?,?,(SELECT category_id FROM categories WHERE name=?),?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+			ps = con.prepareStatement("INSERT INTO posts (post_name,author_id,post_description,categories_category_id,date,destination_name,longitude,latitude,picture_url,video_url) VALUES (?,?,?,(SELECT category_id FROM categories WHERE name=?),?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, p.getPostName());
 			ps.setLong(2, p.getAuthor().getUserId());
 			ps.setString(3, p.getDescription());
-			System.out.println(p.getCategory().getName());
 			ps.setString(4, p.getCategory().getName());
 			ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
 			ps.setString(6, p.getDestination());
+			System.out.println(new BigDecimal(p.getLatitude()));
 			ps.setBigDecimal(7, new BigDecimal(p.getLongitude()));
 			ps.setBigDecimal(8, new BigDecimal(p.getLatitude()));
 			ps.setString(9, p.getPictureURL());
 			ps.setString(10, p.getVideoURL());
 			ps.executeUpdate();
-			//TODO fix problem with double and decimal in DB
 			ResultSet rs = ps.getGeneratedKeys();
 			rs.next();
 			long postId = rs.getLong(1);

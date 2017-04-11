@@ -66,8 +66,9 @@ private static CommentDAO instance;
 	}
 	
 	public static synchronized CommentDAO getInstance() {
-		if(instance == null) 
+		if(instance == null) {
 			instance = new CommentDAO();
+		}
 		return instance;
 	}
 	

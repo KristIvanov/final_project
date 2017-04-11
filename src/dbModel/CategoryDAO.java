@@ -36,8 +36,9 @@ public class CategoryDAO {
 	}
 	
 	public static synchronized CategoryDAO getInstance() {
-		if(instance == null) 
+		if(instance == null) {
 			instance = new CategoryDAO();
+		}
 		return instance;
 	}
 	

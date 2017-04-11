@@ -15,7 +15,7 @@ import model.User;
 
 public class UserDAO {
 	
-  private static UserDAO instance;
+  private static UserDAO instance=new UserDAO();
   
   private UserDAO() {}
   

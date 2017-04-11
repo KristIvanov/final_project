@@ -40,17 +40,14 @@ public class AddPostServlet extends HttpServlet {
 			String username = (String) req.getSession().getAttribute("username");
 			String postdescription = req.getParameter("postdescription").trim();
 			String categoryName = req.getParameter("category");
-			System.out.println(categoryName);
 			LocalDateTime date = LocalDateTime.now();
 			String destinationName = req.getParameter("destinationname").trim();
 			String longitude = req.getParameter("longitude");
 			String latitude = req.getParameter("latitude");
-			System.out.println(longitude);
 			String hashtags = req.getParameter("hashtags").trim();
 			String[] keywords = hashtags.split(" ");
-			System.out.println(keywords.length);
 	        String postPicUrl=null;
-			if(req.getPart("photo") != null) {
+			if(req.getPart("photo").getSize() != 0) {
 				Part postPic = req.getPart("photo");//handles data from <input type=file name=photo>
 				InputStream postPicStream = postPic.getInputStream();
 				File dir = new File("C:\\travelBook\\postsPics");
@@ -63,7 +60,8 @@ public class AddPostServlet extends HttpServlet {
 			} 
 			
 			String postVideoUrl=null;
-			if(req.getPart("video") != null) {
+			
+			if(req.getPart("video").getSize() != 0) {
 				Part postVideo = req.getPart("video");
 				InputStream postVideoStream = postVideo.getInputStream();
 				File dir = new File("C:\\travelbook\\postsVideos");
