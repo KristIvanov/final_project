@@ -16,6 +16,7 @@ import model.User;
 public class UserDAO {
 	
   private static UserDAO instance=new UserDAO();
+  private static Connection connection = DBManager.getInstance().getConnection();
   
   private UserDAO() {}
   
@@ -26,95 +27,94 @@ public class UserDAO {
     return instance;
   }
   
-  public synchronized Set<User> getAllUsers() throws SQLException {
-	  Set<User> users = new HashSet<User>();
-	  Connection con = DBManager.getInstance().getConnection();
-    try {
-    	con.setAutoCommit(false);
-    	//get all users
-    	Statement userST = con.createStatement();
-    	ResultSet usersRS = userST.executeQuery("SELECT user_id,username,password,first_name,last_name,email,pictureURL FROM users;");
-      	while (usersRS.next()) {
-      		User u = new User(	usersRS.getString("username"), 
-      							usersRS.getString("password"), 
-      							usersRS.getString("first_name"), 
-      							usersRS.getString("last_name"), 
-      							usersRS.getString("email"));  //TODO hash pass);
-      		users.add(u);
-      		
-      		//set user's id
-      		u.setUserId(usersRS.getLong("user_id"));
-      		//set user's picture if there is one
-      		String pictureUrl ="";
-      		if((pictureUrl=usersRS.getString("pictureURL"))!=null) {
-      			u.setPhotoURL(pictureUrl);
-      		}
-      		
-      		
-	    	String postsSQL = "SELECT posts_post_id FROM users_has_posts WHERE users_user_id=?";
-	    	String followersSQL = "SELECT follower_id FROM users_has_followers WHERE user_id=?";
-	    	String followingSQL = "SELECT user_id FROM users_has_followers WHERE follower_id=?";
-	    	
-	    	//get user's posts
-	    	PreparedStatement postsST = con.prepareStatement(postsSQL);
-	    	postsST.setLong(1, u.getUserId());
-	    	ResultSet postsRS = postsST.executeQuery();
-	    	while(postsRS.next()) {
-	    		u.addPost(PostManager.getInstance().getPosts().get(postsRS.getLong("posts_post_id")));
-	    	}
-	    	postsST.close();
-	    	postsRS.close();
-	    	
-	    	
-	    	//get user's followers
-	    	PreparedStatement followersPS = con.prepareStatement(followersSQL);
-	    	followersPS.setLong(1, u.getUserId());
-	    	ResultSet followersRS = followersPS.executeQuery();
-	    	while(followersRS.next()) {
-	    		long followerId = followersRS.getLong("follower_id");
-	    		PreparedStatement followerName = con.prepareStatement("SELECT username FROM users WHERE user_id=?");
-	    		followerName.setLong(1, followerId);
-	    		ResultSet rs = followerName.executeQuery();
-	    		rs.next();
-	    		User follower = UsersManager.getInstance().getRegisteredUsers().get(rs.getString("username"));
-	    		u.addFollower(follower);
-	    	}
-	    	
-	    	followersPS.close();
-	    	followersRS.close();
-	    	
-	    	//get user's following
-	    	PreparedStatement followingPS = con.prepareStatement(followingSQL);
-	    	followingPS.setLong(1, u.getUserId());
-	    	ResultSet followingRS = followingPS.executeQuery();
-	    	while(followingRS.next()) {
-	    		long followingId = followingRS.getLong("user_id");
-	    		PreparedStatement followingName = con.prepareStatement("SELECT username FROM users WHERE user_id=?");
-	    		followingName.setLong(1, followingId);
-	    		ResultSet rs = followingName.executeQuery();
-	    		rs.next();
-	    		User following = UsersManager.getInstance().getRegisteredUsers().get(rs.getString("username"));
-	    		u.addFollowing(following);
-	    	}
-	    	
-	    	followersPS.close();
-	    	followersRS.close();
-      	}
-      	userST.close();
-	    usersRS.close();
-	    con.commit();
-    }
-    catch (SQLException e) {
-    	System.out.println("Cannot make statement." + e.getMessage());
-    	con.rollback();
-    } catch (InvalidInputException e) {
-		e.printStackTrace();
-	} 
-    finally {
-    	con.setAutoCommit(true);
-    }
-    System.out.println("Users loaded successfully");
-	return Collections.unmodifiableSet(users);
+  public  Set<User> getAllUsers() throws SQLException {
+	synchronized (DBManager.getInstance()) {
+		
+			Set<User> users = new HashSet<User>();
+			Connection con = DBManager.getInstance().getConnection();
+	    try {
+	    	//get all users
+	    	Statement userST = con.createStatement();
+	    	ResultSet usersRS = userST.executeQuery("SELECT user_id,username,password,first_name,last_name,email,pictureURL FROM users;");
+	      	while (usersRS.next()) {
+	      		User u = new User(	usersRS.getString("username"), 
+	      							usersRS.getString("password"), 
+	      							usersRS.getString("first_name"), 
+	      							usersRS.getString("last_name"), 
+	      							usersRS.getString("email"));  //TODO hash pass);
+	      		users.add(u);
+	      		
+	      		//set user's id
+	      		u.setUserId(usersRS.getLong("user_id"));
+	      		//set user's picture if there is one
+	      		String pictureUrl ="";
+	      		if((pictureUrl=usersRS.getString("pictureURL"))!=null) {
+	      			u.setPhotoURL(pictureUrl);
+	      		}
+	      		
+	      		
+		    	String postsSQL = "SELECT posts_post_id FROM users_has_posts WHERE users_user_id=?";
+		    	String followersSQL = "SELECT follower_id FROM users_has_followers WHERE user_id=?";
+		    	String followingSQL = "SELECT user_id FROM users_has_followers WHERE follower_id=?";
+		    	
+		    	//get user's posts
+		    	PreparedStatement postsST = con.prepareStatement(postsSQL);
+		    	postsST.setLong(1, u.getUserId());
+		    	ResultSet postsRS = postsST.executeQuery();
+		    	while(postsRS.next()) {
+		    		u.addPost(PostManager.getInstance().getPosts().get(postsRS.getLong("posts_post_id")));
+		    	}
+		    	postsST.close();
+		    	postsRS.close();
+		    	
+		    	
+		    	//get user's followers
+		    	PreparedStatement followersPS = con.prepareStatement(followersSQL);
+		    	followersPS.setLong(1, u.getUserId());
+		    	ResultSet followersRS = followersPS.executeQuery();
+		    	while(followersRS.next()) {
+		    		long followerId = followersRS.getLong("follower_id");
+		    		PreparedStatement followerName = con.prepareStatement("SELECT username FROM users WHERE user_id=?");
+		    		followerName.setLong(1, followerId);
+		    		ResultSet rs = followerName.executeQuery();
+		    		rs.next();
+		    		User follower = UsersManager.getInstance().getRegisteredUsers().get(rs.getString("username"));
+		    		u.addFollower(follower);
+		    	}
+		    	
+		    	followersPS.close();
+		    	followersRS.close();
+		    	
+		    	//get user's following
+		    	PreparedStatement followingPS = con.prepareStatement(followingSQL);
+		    	followingPS.setLong(1, u.getUserId());
+		    	ResultSet followingRS = followingPS.executeQuery();
+		    	while(followingRS.next()) {
+		    		long followingId = followingRS.getLong("user_id");
+		    		PreparedStatement followingName = con.prepareStatement("SELECT username FROM users WHERE user_id=?");
+		    		followingName.setLong(1, followingId);
+		    		ResultSet rs = followingName.executeQuery();
+		    		rs.next();
+		    		User following = UsersManager.getInstance().getRegisteredUsers().get(rs.getString("username"));
+		    		u.addFollowing(following);
+		    	}
+		    	
+		    	followersPS.close();
+		    	followersRS.close();
+	      	}
+	      	userST.close();
+		    usersRS.close();
+	    }
+	    catch (SQLException e) {
+	    	System.out.println("Cannot make statement." + e.getMessage());
+	    } catch (InvalidInputException e) {
+			e.printStackTrace();
+		} 
+	    
+	    System.out.println("Users loaded successfully");
+	    
+		return Collections.unmodifiableSet(users);
+	}
   }
   
   public void saveUser(User user) {

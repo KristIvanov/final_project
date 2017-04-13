@@ -21,10 +21,13 @@ public class PictureServlet extends HttpServlet {
 
 	public static void returnProfilePic(User u,  HttpServletResponse response) throws IOException{
 
-		
-		File profilePicFile = new File(u.getPhotoURL());
-		if(!profilePicFile.exists()) {
-		 profilePicFile = new File("C:\\travelBook\\usersProfilePics\\No_person.jpg");
+		File profilePicFile;
+		if(u.getPhotoURL()!=null) {
+			 profilePicFile = new File(u.getPhotoURL());
+		}
+		else {
+
+			profilePicFile = new File("C:\\travelBook\\usersProfilePics\\No_person.jpg");
 		}
 		response.setContentLength((int)profilePicFile.length());
 		String contentType = "image/"+profilePicFile.getName().split("[.]")[profilePicFile.getName().split("[.]").length-1];

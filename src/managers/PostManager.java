@@ -88,6 +88,7 @@ public class PostManager {
 	public List<Post> searchByDestination(String name){
 		ArrayList<Post> searchResults = new ArrayList<>();
 		for (Post post : allPosts.values()) {
+			System.out.println(post.getDestination());
 			if (post.getDestination().contains(name)) {
 				searchResults.add(post);
 			}

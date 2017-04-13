@@ -22,12 +22,13 @@ public class CommentDAO {
 private static CommentDAO instance;
 	
 	public ConcurrentHashMap<Long, Comment> comments;
+	
 
 	private CommentDAO() {
 		comments= new ConcurrentHashMap<>();
 		Connection con = DBManager.getInstance().getConnection();
 		try {
-			con.setAutoCommit(false);
+			
 			PreparedStatement ps = con.prepareStatement("SELECT comment_id,author_id,text,posts_post_i,dated FROM comments");
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
@@ -40,29 +41,19 @@ private static CommentDAO instance;
 		  		Comment comment = new Comment(author, rs.getString("text"), post,rs.getTimestamp("date").toLocalDateTime());
 				comments.put(rs.getLong("comment_id"), comment);
 				comment.setComment_id(rs.getLong("comment_id"));
-				con.commit();
+				
 				rs.close();
 				ps.close();
 				authorRS.close();
 				authorST.close();
 			}
 		} catch (SQLException e) {
-			try {
-				con.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			
 			e.printStackTrace();
 		} catch (InvalidInputException e) {
 			e.printStackTrace();
 		}
-		finally {
-			try {
-				con.setAutoCommit(true);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		
 	}
 	
 	public static synchronized CommentDAO getInstance() {

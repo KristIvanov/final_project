@@ -22,6 +22,7 @@ import model.User;
 public class PostDAO {
 
 	private static PostDAO instance=new PostDAO();
+
 	
 	private PostDAO() {
 	}
@@ -30,101 +31,101 @@ public class PostDAO {
 		return instance;
 	}
 	
-	public synchronized Set<Post> getAllPosts() throws SQLException {
-		Connection con = DBManager.getInstance().getConnection();
-		HashSet<Post> posts = new HashSet<>();
-			try { 
-				con.setAutoCommit(false);
-				Statement postST = con.createStatement();
-				ResultSet postRS = postST.executeQuery("SELECT post_id,post_name,post_description,author_id,categories_category_id,date,destination_name,longitude,latitude,picture_url,video_url FROM posts ");
-				while (postRS.next()) {
-					long post_id = postRS.getLong("post_id");
-		    	
-					//get the category
-					Category category = CategoryDAO.getInstance().getALlCategoriesByID().get(postRS.getLong("categories_category_id"));
-		  		
-					//get the author
-					PreparedStatement authorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
-			  		authorST.setLong(1, postRS.getLong("author_id"));
-			  		ResultSet authorRS = authorST.executeQuery();
-			  		authorRS.next();
-			  		User author = UsersManager.getInstance().getRegisteredUsers().get(authorRS.getString("username"));
-			  	
-			  		//get the hashtags
-			  		PreparedStatement hashtagsST = con.prepareStatement("SELECT hash_tag FROM posts_hash_tags WHERE post_id=?");
-			  		hashtagsST.setLong(1, post_id);
-			  		ResultSet hashtagsRS = hashtagsST.executeQuery();
-			  		ArrayList<String> hashtags = new ArrayList<>();
-			  		while(hashtagsRS.next()) {
-			  			hashtags.add(hashtagsRS.getString("hash_tag"));
-			  		}
+	public  Set<Post> getAllPosts() throws SQLException {
+		synchronized (DBManager.getInstance()) {
+			
+			HashSet<Post> posts = new HashSet<>();
+			Connection con = DBManager.getInstance().getConnection();
+				try { 
+					
+					Statement postST = con.createStatement();
+					ResultSet postRS = postST.executeQuery("SELECT post_id,post_name,post_description,author_id,categories_category_id,date,destination_name,longitude,latitude,picture_url,video_url FROM posts ");
+					while (postRS.next()) {
+						long post_id = postRS.getLong("post_id");
+			    	
+						//get the category
+						Category category = CategoryDAO.getInstance().getALlCategoriesByID().get(postRS.getLong("categories_category_id"));
 			  		
-			  		//create the post and add it in the hashset
-			  		Post post = new Post	(postRS.getString("post_name"),
-			  								category,
-			  								postRS.getString("post_description"), 
-			  								author, 
-			  								postRS.getTimestamp("date").toLocalDateTime(), 
-			  								postRS.getString("destination_name"),
-			  								postRS.getDouble("longitude"),
-			  								postRS.getDouble("latitude"),
-			  								postRS.getString("picture_url"),
-			  								postRS.getString("video_url"),
-			  								hashtags);
-			  		posts.add(post);
-			    	post.setPostId(post_id);
-			  		
-			    	//get the likers
-			  		PreparedStatement likersST = con.prepareStatement("SELECT liker_id FROM posts_has_likers WHERE liked_post_id=?");
-			  		likersST.setLong(1, post_id);
-			  		ResultSet likersRS = likersST.executeQuery();
-			  		while (likersRS.next()) {
-			  			likersST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
-				  		likersST.setLong(1, postRS.getLong("author_id"));
-				  		ResultSet rs = authorST.executeQuery();
-				  		rs.next();
-				  		User liker = UsersManager.getInstance().getRegisteredUsers().get(rs.getString("username"));
-			  			post.addLiker(liker);
-			  			rs.close();
-			  		}
-			  		//get all comments
-			  		PreparedStatement commentsST = con.prepareStatement("SELECT comment_id FROM comments WHERE posts_post_id =?");
-			  		commentsST.setLong(1, post_id);
-			  		ResultSet commentsRS = commentsST.executeQuery();
-			  		while(commentsRS.next()) {
-			  			post.addComment(CommentDAO.getInstance().comments.get(commentsRS.getLong("comment_id")));
-			  		}
-	
-			  		authorRS.close();
-			  		authorST.close();
-			  		commentsRS.close();
-			  		commentsST.close();
-			  		likersRS.close();
-			  		likersST.close();
-			  		
-			  		hashtagsST.close();
-			  		hashtagsRS.close();
-			  		
-			  		
-			  		con.commit();
-		      }
-				postRS.close();
-		  		postST.close();
-			}
-			catch (SQLException e) {
-			    System.out.println("Something went wrong while trying to get all posts!");
-			    e.printStackTrace();
-			    con.rollback();
-			} catch (InvalidInputException e) {
-				e.printStackTrace();
-				System.out.println(e.getMessage());
-			} 
-			finally {
-			   con.setAutoCommit(true);
-
-			}
+						//get the author
+						PreparedStatement authorST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
+				  		authorST.setLong(1, postRS.getLong("author_id"));
+				  		ResultSet authorRS = authorST.executeQuery();
+				  		authorRS.next();
+				  		System.out.println("posts dao working");
+				  		User author = UsersManager.getInstance().getRegisteredUsers().get(authorRS.getString("username"));
+				  	
+				  		//get the hashtags
+				  		PreparedStatement hashtagsST = con.prepareStatement("SELECT hash_tag FROM posts_hash_tags WHERE post_id=?");
+				  		hashtagsST.setLong(1, post_id);
+				  		ResultSet hashtagsRS = hashtagsST.executeQuery();
+				  		ArrayList<String> hashtags = new ArrayList<>();
+				  		while(hashtagsRS.next()) {
+				  			hashtags.add(hashtagsRS.getString("hash_tag"));
+				  		}
+				  		
+				  		//create the post and add it in the hashset
+				  		Post post = new Post	(postRS.getString("post_name"),
+				  								category,
+				  								postRS.getString("post_description"), 
+				  								author, 
+				  								postRS.getTimestamp("date").toLocalDateTime(), 
+				  								postRS.getString("destination_name"),
+				  								postRS.getDouble("longitude"),
+				  								postRS.getDouble("latitude"),
+				  								postRS.getString("picture_url"),
+				  								postRS.getString("video_url"),
+				  								hashtags);
+				  		posts.add(post);
+				    	post.setPostId(post_id);
+				    	System.out.println(post.getDestination());
+				  		
+				    	//get the likers
+				  		PreparedStatement likersST = con.prepareStatement("SELECT liker_id FROM posts_has_likers WHERE liked_post_id=?");
+				  		likersST.setLong(1, post_id);
+				  		ResultSet likersRS = likersST.executeQuery();
+				  		while (likersRS.next()) {
+				  			likersST = con.prepareStatement("SELECT username FROM users WHERE user_id=?"); 
+					  		likersST.setLong(1, postRS.getLong("author_id"));
+					  		ResultSet rs = authorST.executeQuery();
+					  		rs.next();
+					  		User liker = UsersManager.getInstance().getRegisteredUsers().get(rs.getString("username"));
+				  			post.addLiker(liker);
+				  			rs.close();
+				  		}
+				  		//get all comments
+				  		PreparedStatement commentsST = con.prepareStatement("SELECT comment_id FROM comments WHERE posts_post_id =?");
+				  		commentsST.setLong(1, post_id);
+				  		ResultSet commentsRS = commentsST.executeQuery();
+				  		while(commentsRS.next()) {
+				  			post.addComment(CommentDAO.getInstance().comments.get(commentsRS.getLong("comment_id")));
+				  		}
 		
-		return Collections.unmodifiableSet(posts);
+				  		authorRS.close();
+				  		authorST.close();
+				  		commentsRS.close();
+				  		commentsST.close();
+				  		likersRS.close();
+				  		likersST.close();
+				  		
+				  		hashtagsST.close();
+				  		hashtagsRS.close();
+				  		
+			      }
+					postRS.close();
+			  		postST.close();
+				}
+				catch (SQLException e) {
+				    System.out.println("Something went wrong while trying to get all posts!");
+				    e.printStackTrace();
+				    
+				} catch (InvalidInputException e) {
+					e.printStackTrace();
+					System.out.println(e.getMessage());
+				} 
+				
+			System.out.println(posts.size());
+			return Collections.unmodifiableSet(posts);
+		}
 	}
 	
 	public synchronized void addNewPost(Post p) {

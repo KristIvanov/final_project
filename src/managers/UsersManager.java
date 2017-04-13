@@ -18,9 +18,9 @@ public class UsersManager {
 	//concurrenthashmap because a lot of threads can use it
 	  private ConcurrentHashMap<String, User> registeredUsers; //username--> user
 	  private static UsersManager instance=new UsersManager();
-	  
+	  //kakvo stava be 
 	  private UsersManager() {
-	   
+		  System.out.println("users manager constructed");
 		registeredUsers = new ConcurrentHashMap<>();
 	   try {
 		   Set<User> users = UserDAO.getInstance().getAllUsers();

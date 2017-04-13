@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
- <%@ page errorPage="errorPage.jsp"%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -42,26 +42,22 @@ $(document).ready(function(){
 	<c:forEach var="post" items="${sessionScope.resultsByTag}">
 		<div class="postlook" align="center">
 				<!-- linka kym profile page na user-a nqmam ideq dali trqbva da e taka -->
-				<a href = "?userviewed= <c:out value="${post.author.username}"/> " >${ post.author.username }</a><br>
+				<a href = "/<c:out value="${post.author.username}"/> " >${ post.author.username }</a><br>
 				
 				
 				<c:out value="${ post.author.first_name }"></c:out>
-			             <p>first name</p>
 			    <c:out value="${ post.author.last_name }"></c:out>
-	             <p>last name</p><br>
 	             
 				<c:out value="${ post.date }"></c:out>
-	             <p>date</p><br>
 				<c:out value="${ post.category }"></c:out>
-	             <p>category</p><br>
 		
 				<c:out value="${ post.postName }"></c:out>
-	             <p>name</p><br>
+	             <p>postname</p><br>
 		
 				<c:out value="${ post.description }"></c:out>
 	             <p>desc</p><br>
 	            
-				<c:out value="${ post.likers.size }"></c:out>
+				<!-- TODO ADD LIKES -->
 	             <p>likes</p><br>
 	           
 	             <c:forEach var="Comment" items="${post.comments}"> 
@@ -73,33 +69,28 @@ $(document).ready(function(){
 </div>
 
 <div hidden id="printByDestination" align="center">
-	<h1>Posts tagged with: <c:out value="${sessionScope.searchFor}"></c:out></h1>
+	<h1>Posts with destination: <c:out value="${sessionScope.searchFor}"></c:out></h1>
 	<c:if test="${sessionScope.resultsByDestination==null || sessionScope.resultsByDestination.isEmpty()}">
 	<br><br><h2 align="center">No destinations found</h2>
 	</c:if>
 	<c:forEach var="post" items="${sessionScope.resultsByDestination}">
 		<div class="postlook" align="center">
 				<!-- linka kym profile page na user-a nqmam ideq dali trqbva da e taka -->
-				<a href = "?userviewed= <c:out value="${post.author.username}"/> " >${ post.author.username }</a><br>
+				<a href = "/<c:out value="${post.author.username}"/> " >${ post.author.username }</a><br>
 				
 				
 				<c:out value="${ post.author.first_name }"></c:out>
-			             <p>first name</p>
 			    <c:out value="${ post.author.last_name }"></c:out>
-	             <p>last name</p><br>
 	             
 				<c:out value="${ post.date }"></c:out>
-	             <p>date</p><br>
 				<c:out value="${ post.category }"></c:out>
-	             <p>category</p><br>
 		
 				<c:out value="${ post.postName }"></c:out>
-	             <p>name</p><br>
 		
 				<c:out value="${ post.description }"></c:out>
 	             <p>desc</p><br>
 	            
-				<c:out value="${ post.likers.size }"></c:out>
+				<!-- TODO add likes -->
 	             <p>likes</p><br>
 	           
 	             <c:forEach var="Comment" items="${post.comments}"> 
@@ -111,7 +102,7 @@ $(document).ready(function(){
 </div>
 
 <div hidden id="printByUser" align="center">
-	<h1>Posts tagged with: <c:out value="${sessionScope.searchFor}"></c:out></h1>
+	<h1>Users: <c:out value="${sessionScope.searchFor}"></c:out></h1>
 	<c:if test="${sessionScope.resultsByUser==null || sessionScope.resultsByUser.isEmpty()}">
 	<br><br><h2 align="center">No users found</h2>
 	</c:if>
@@ -120,15 +111,12 @@ $(document).ready(function(){
 				<!-- show small Picture -->
 				
 				<!-- linka kym profile page na user-a nqmam ideq dali trqbva da e taka -->
-				<a href = "?userviewed= <c:out value="${user.username}"/> " >${ post.author.username }</a><br>
+				<a href = "/<c:out value="${user.username}"/> " >${ post.author.username }</a><br>
 				
 				<c:out value="${ user.first_name }"></c:out>
-			             <p>first name</p>
 			    <c:out value="${ user.last_name }"></c:out>
-	             <p>last name</p><br>
 	             
 				<c:out value="${ user.email }"></c:out>
-	             <p>email</p><br>
 				
 		</div><br>
 	</c:forEach>

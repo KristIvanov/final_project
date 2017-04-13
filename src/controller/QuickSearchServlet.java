@@ -28,6 +28,7 @@ public class QuickSearchServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String words = request.getParameter("searchFor").trim();
 		String[] keywords = words.split(" ");
+		System.out.println(words);
 		List<Post> resultsByTag = PostManager.getInstance().searchByTags(keywords);
 		List<Post> resultsByDestination = PostManager.getInstance().searchByDestination(words);
 		List<User> resultsByUser = UsersManager.getInstance().searchUser(words);
